@@ -10,7 +10,7 @@ conda install -n mieru -y \
     fastp star samtools bedtools deeptools subread rmats \
     r-base r-essentials r-extrafont \
     r-ggfortify r-ggrepel r-patchwork r-enrichr r-ggVennDiagram \
-    bioconductor-deseq2 \
+    bioconductor-deseq2
 
 conda activate mieru
 ```

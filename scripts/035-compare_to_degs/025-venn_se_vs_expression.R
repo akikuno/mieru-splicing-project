@@ -6,9 +6,7 @@ df_se <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv") %>% filter(fdr
 
 df_deg <- read_csv("data/degs/ko_vs_mieru.csv")
 
-df_se_deg <- df_se %>% left_join(df_deg, by = c("ko_symbol", "target_symbol"))
-
-ko_symbols <- df_se_deg$ko_symbol %>% unique()
+ko_symbols <- df_deg$ko_symbol %>% unique()
 
 input_ko_symbol <- ko_symbols[1]
 
