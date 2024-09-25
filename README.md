@@ -9,7 +9,7 @@ conda create -n mieru -y python=3.10
 conda install -n mieru -y \
     fastp star samtools bedtools deeptools subread rmats \
     r-base r-essentials r-extrafont \
-    r-ggfortify r-ggrepel r-patchwork r-enrichr \
+    r-ggfortify r-ggrepel r-patchwork r-enrichr r-ggVennDiagram \
     bioconductor-deseq2 \
 
 conda activate mieru
