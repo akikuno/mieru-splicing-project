@@ -2,21 +2,28 @@
 # Install Packages
 ###############################################################################
 
-options(repos = "http://cran.us.r-project.org")
-options(readr.show_col_types = FALSE)
-if (!require("pacman", quietly = TRUE)) install.packages("pacman")
-pacman::p_load(readr, tidyr, tidyfast, dplyr, stringr, ggplot2, ggrepel)
+library(tidyverse)
+library(ggrepel)
+# options(repos = "http://cran.us.r-project.org")
+# options(readr.show_col_types = FALSE)
+# if (!require("pacman", quietly = TRUE)) install.packages("pacman")
+# pacman::p_load(readr, tidyr, tidyfast, dplyr, stringr, ggplot2, ggrepel)
 
 ###############################################################################
-# Download and format the data
+# Load Data
 ###############################################################################
 
-tpm_matrix <- read_tsv("data/TPM_Matrix_RIAS.tsv")
+df_counts <- read_tsv("data/counts/featurecounts_gene_name.tsv.gz")
 marker_genes <- read_tsv("data/markers.tsv")
+
+#------------------------------------------------------------------------------
+# TPM Calculation
+#------------------------------------------------------------------------------
+
 
 tbl_expression <-
     tpm_matrix %>%
-    dt_pivot_longer(cols = -gene_sym, names_to = "sample", values_to = "expression") %>%
+    pivot_longer(cols = -gene_sym, names_to = "sample", values_to = "expression") %>%
     as_tibble()
 
 tbl_mean_expression <-

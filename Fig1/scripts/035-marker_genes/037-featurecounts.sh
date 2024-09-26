@@ -10,7 +10,6 @@ threads=$((threads - 4))
 # featureCounts
 ##################################
 
-# [ -s data/genome/mm39_transcript_name.gtf ] || grep transcript_name data/genome/mm39.gtf >data/genome/mm39_transcript_name.gtf
 [ -s data/genome/mm39_gene_name.gtf ] || grep gene_name data/genome/mm39.gtf >data/genome/mm39_gene_name.gtf
 
 time featureCounts -T "$threads" -p -B \
