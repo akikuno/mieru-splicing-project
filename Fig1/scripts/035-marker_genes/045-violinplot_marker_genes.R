@@ -4,10 +4,6 @@
 
 library(tidyverse)
 library(ggrepel)
-# options(repos = "http://cran.us.r-project.org")
-# options(readr.show_col_types = FALSE)
-# if (!require("pacman", quietly = TRUE)) install.packages("pacman")
-# pacman::p_load(readr, tidyr, tidyfast, dplyr, stringr, ggplot2, ggrepel)
 
 ###############################################################################
 # Load Data
@@ -20,30 +16,39 @@ marker_genes <- read_tsv("data/markers.tsv")
 # TPM Calculation
 #------------------------------------------------------------------------------
 
+# Function to calculate TPM for a single column (sample)
+calculate_tpm <- function(counts, lengths) {
+    rpk <- counts / (lengths / 1000)  # Reads per kilobase (RPK)
+    per_million_scaling_factor <- sum(rpk) / 1e6  # Scaling factor
+    tpm <- rpk / per_million_scaling_factor  # TPM
+    return(tpm)
+}
 
-tbl_expression <-
-    tpm_matrix %>%
-    pivot_longer(cols = -gene_sym, names_to = "sample", values_to = "expression") %>%
+# Apply the TPM calculation for each sample (i.e., each column of counts)
+df_tpm <- df_counts %>%
+    mutate(across(starts_with("MIERU_CH"), ~ calculate_tpm(.x, Length), .names = "{col}")) %>%
+    select(!Length)
+
+df_expression <-
+    df_tpm %>%
+    pivot_longer(cols = -Geneid, names_to = "sample", values_to = "expression") %>%
     as_tibble()
 
-tbl_mean_expression <-
-    tbl_expression %>%
-    group_by(sample, gene_sym) %>%
+df_mean_expression <-
+    df_expression %>%
+    mutate(expression = expression + 1) %>%
+    group_by(sample, Geneid) %>%
     summarize(logmean = log2(mean(expression, na.rm = TRUE))) %>%
-    # if mean value == 0, log transformation makes it as -Inf,
-    # so match the minimum value for each group.
-    mutate(logmean = if_else(logmean == -Inf, Inf, logmean)) %>%
-    mutate(logmean = if_else(logmean == Inf, min(logmean), logmean)) %>%
     ungroup()
 
-tbl_markers <-
+df_markers <-
     marker_genes %>%
-    pivot_longer(everything(), names_to = "tissue", values_to = "gene_sym")
+    pivot_longer(everything(), names_to = "tissue", values_to = "Geneid")
 
 df_plot <-
-    left_join(tbl_mean_expression, tbl_markers, by = "gene_sym") %>%
+    left_join(df_mean_expression, df_markers, by = "Geneid") %>%
     mutate(tissue = if_else(!is.na(tissue), tissue, "other")) %>%
-    mutate(label = if_else(tissue == "other", as.character(NA), gene_sym)) %>%
+    mutate(label = if_else(tissue == "other", as.character(NA), Geneid)) %>%
     mutate(colors = case_when(
         tissue == "other" ~ "#DDDDDD",
         tissue == "exoderm" ~ "#ff4b00",
@@ -64,12 +69,6 @@ levels <- c("TC (\u00D71) 1", "TC (\u00D71) 2", "TC (\u00D71) 3", "TC (\u00D71) 
     "TC (\u00D715)")
 
 df_plot$sample <- factor(df_plot$sample, levels = levels)
-# df_plot$sample <- factor(df_plot$sample, levels = c(c("MIERU_CH_1", "MIERU_CH_2", "MIERU_CH_3", "MIERU_CH_4", "MIERU_Homo_1", "MIERU_Homo_2", "MIERU_Homo_3", "MIERU_Homo_4", "MIERU_CH_1050")))
-
-# df_plot %>% filter(gene_sym == "Sox17")
-# df_plot %>% filter(gene_sym == "Otx2")
-# df_plot %>% filter(gene_sym == "T")
-
 
 ###############################################################################
 # Violin plot
@@ -87,31 +86,10 @@ g_violin <-
         box.padding = 0.5
     ) +
     scale_fill_identity(colors) +
-    labs(x = "", y = "log2 TPM") +
+    labs(x = "", y = "log2(TPM + 1)") +
     theme_bw() +
     theme(axis.title.x = element_blank()) +
     facet_wrap(~sample, scales = "free_y", ncol = 4)
 
-ggsave("reports/plot_violin_markers.png", g_violin, width = 15, height = 12, dpi = 600)
-ggsave("reports/plot_violin_markers.pdf", g_violin, width = 15, height = 12)
-
-
-# g_violin <- ggplot(df_plot) +
-#     aes(
-#         x = tissue, y = logmean, label = label,
-#         fill = factor(colors)
-#     ) +
-#     geom_violin(position = position_dodge(6)) +
-#     # geom_boxplot(
-#     #     outlier.shape = NA,
-#     #     position = position_dodge(1),
-#     #     color = "#333333",
-#     #     width = 0.2,
-#     #     alpha = 0.2
-#     # ) +
-#     scale_fill_identity(colors) +
-#     labs(x = "", y = "log2 TPM") +
-#     theme_bw() +
-#     facet_wrap(~sample, scales = "free_y", ncol = 4)
-
-# ggsave("reports/plot_violin_tissues.png", g_violin, width = 15, height = 5, dpi = 600)
+ggsave("reports/violinplot_markers.jpg", g_violin, width = 15, height = 12, dpi = 600)
+ggsave("reports/violinplot_markers.pdf", g_violin, width = 15, height = 12)
