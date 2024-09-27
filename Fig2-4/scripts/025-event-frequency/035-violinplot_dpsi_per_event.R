@@ -9,7 +9,8 @@ df_filter <- df %>% filter(fdr < 0.05, abs(dpsi) > 0.1)
 ###########################################################
 # Calculate the occurrence count of each `event`
 ###########################################################
-event_counts <- df_filter %>% 
+
+event_counts <- df_filter %>%
     group_by(ko_symbol, event) %>%
     count(event) %>%
     ungroup() %>%
