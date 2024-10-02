@@ -27,7 +27,8 @@ mkdir -p data/exon_characteristics/phyloP35way_chr
 
 for chr in {1..19} X Y; do
     echo "chr${chr}" is processing...
-    time awk -v chr=chr"$chr" '$1 == chr' data/exon_characteristics/mm39.phyloP35way.bedgraph >data/exon_characteristics/phyloP35way_chr/mm39.phyloP35way.chr"$chr".bedgraph
+    time cat data/exon_characteristics/mm39.phyloP35way.bedgraph |
+        awk -v chr=chr"$chr" '$1 == chr' >data/exon_characteristics/phyloP35way_chr/mm39.phyloP35way.chr"$chr".bedgraph
 done
 
 #######################################
