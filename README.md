@@ -1,5 +1,7 @@
 # mieru-splicing-project
 
+This repository contains scripts and figures related to the mieru-splicing-project.
+
 ## Environment
 
 - Unix environment such as WSL2 with Ubuntu or macOS is required.
@@ -19,3 +21,9 @@ conda install -n mieru -y \
 
 conda activate mieru
 ```
+
+## Data storage locations
+
+- `Fig1/data/fastq` (GSE XXXXX)
+- `Fig2-4/data/fastq` (GSE YYYYY)
+- `Fig2-4/data/rmats/original_output` (GSE YYYYY: contents of rMATS.zip)
