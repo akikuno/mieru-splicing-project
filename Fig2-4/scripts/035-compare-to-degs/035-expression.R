@@ -14,8 +14,9 @@ df_plot <- df_deg %>% left_join(df_counts, by = c("ko_symbol"))
 g_violin <-
     ggplot(df_plot, aes(x = ko_symbol_counts, y = log2FoldChange)) +
     geom_violin() +
-    geom_jitter(width = 0.2, alpha = 0.5) +
-    theme_minimal() +
+    # geom_jitter(width = 0.2, alpha = 0.5) +
+    geom_boxplot(width = 0.1, outlier.shape = NA) +
+    theme_bw() +
     theme(
     text = element_text(family = "Arial"),
     axis.title.x = element_text(size = 18),
