@@ -12,7 +12,7 @@ conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
 
-conda create -n mieru -y python=3.10
+conda create -n mieru -y python=3.11
 conda install -n mieru -y \
     fastp star samtools bedtools subread rmats \
     r-base r-essentials r-extrafont \
