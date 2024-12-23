@@ -64,6 +64,6 @@ g_violinplot <- wrap_plots(violin_list, nrow = 1)
 # Save the plot
 ###########################################################
 
-dir.create("reports/figure/", showWarnings = FALSE)
-ggsave("reports/figure/025-violinplot.pdf", g_violinplot, width = 24, height = 6, family = "Arial", device = cairo_pdf)
-ggsave("reports/figure/025-violinplot.jpg", g_violinplot, width = 24, height = 6)
+dir.create("reports/Fig2/", showWarnings = FALSE)
+ggsave("reports/Fig2/025-violinplot.pdf", g_violinplot, width = 24, height = 6, family = "Arial", device = cairo_pdf)
+ggsave("reports/Fig2/025-violinplot.jpg", g_violinplot, width = 24, height = 6)

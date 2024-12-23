@@ -54,5 +54,5 @@ for (input_event in events) {
     }
 }
 
-write_csv(genes_intersect, "reports/all_events_deg_overlapped.csv")
+write_csv(genes_intersect, "reports/Fig3/all_events_deg_overlapped.csv")
 

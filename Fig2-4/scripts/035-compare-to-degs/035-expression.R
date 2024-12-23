@@ -32,6 +32,6 @@ g_violin <-
 width <- 18
 height <- 10
 
-dir.create("reports/figure/", showWarnings = FALSE)
-ggsave("reports/figure/045-violin_expression.pdf", g_violin, width = width, height = height, family = "Arial", device = cairo_pdf)
-ggsave("reports/figure/045-violin_expression.jpg", g_violin, width = width, height = height)
+dir.create("reports/Fig3/", showWarnings = FALSE)
+ggsave("reports/Fig3/035-violin_expression.pdf", g_violin, width = width, height = height, family = "Arial", device = cairo_pdf)
+ggsave("reports/Fig3/035-violin_expression.jpg", g_violin, width = width, height = height)
