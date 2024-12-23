@@ -5,7 +5,7 @@ This repository contains scripts and figures related to the mieru-splicing-proje
 ## Environment
 
 - Unix environment such as WSL2 with Ubuntu or macOS is required.
-- Install conda via [miniforge](https://github.com/conda-forge/miniforge)
+- Install conda via [miniforge](https://github.com/conda-forge/miniforge).
 
 ```python
 conda config --add channels defaults
