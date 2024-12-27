@@ -2,49 +2,31 @@ library(tidyverse)
 library(circlize)
 library(patchwork)
 
-df_go <- read_csv("reports/Fig3/055-go_rmats_deg.csv")
+df_go <- read_csv("reports/Fig4/enrichr_go_pathways.csv")
 
-events <- df_go$event %>% unique()
-input_event <- "RI"
+data <- df_go %>%
+    select(Term, from = ko_symbol) %>%
+    mutate(to = str_remove(Term, " \\(GO:.*"))
 
-plot_list <- list()
+top_n <- 10
+data_filtered <-
+    data %>%
+    count(to) %>%
+    arrange(desc(n)) %>%
+    slice_head(n = top_n) %>%
+    inner_join(data, by = "to") %>%
+    mutate(value = 1) %>%
+    distinct() %>%
+    select(from, to, value)
 
-dir.create("reports/Fig3/065-enrichr_to_circos", showWarnings = FALSE)
-for (input_event in events) {
-    data <- df_go %>%
-        filter(event == input_event) %>%
-        select(Term, from = ko_symbol) %>%
-        mutate(to = str_remove(Term, " \\(GO:.*")) %>%
-        select(-Term)
+jpeg(file = "reports/Fig4/025-circos_se.jpg", width = 1500, height = 1500, units = "px", res = 300)
+par(cex = 0.5)
+chordDiagram(data_filtered, transparency = 0.5, annotationTrack = c("name", "grid"),
+    directional = -1,
+    direction.type = c("diffHeight"))
+title("SE")
+dev.off()
 
-    top_n <- 10
-    data_filtered <-
-        data %>%
-        count(to) %>%
-        arrange(desc(n)) %>%
-        slice_head(n = top_n) %>%
-        inner_join(data, by = "to") %>%
-        mutate(value = 1) %>%
-        distinct() %>%
-        select(from, to, value)
-
-    jpeg(file = paste0("reports/Fig3/065-enrichr_to_circos/", input_event, ".jpg"), width = 1500, height = 1500, units = "px", res = 300)
-    par(cex = 0.5)
-    chordDiagram(data_filtered, transparency = 0.5, big.gap = 30)
-    title(input_event)
-    dev.off()
-
-    # pdf(file = paste0("reports/Fig3/065-enrichr_to_circos/", input_event, ".pdf"), width = 1500, height = 1500)
-    # par(cex = 0.5)
-    # chordDiagram(data_filtered, transparency = 0.5, big.gap = 30)
-    # title(input_event)
-    # dev.off()
-
-    data_filtered %>%
-        select(top_10 = to) %>%
-        distinct() %>%
-        write_csv(paste0("reports/Fig3/065-enrichr_to_circos/", input_event, ".csv"))
-}
 
 # p <- wrap_elements(full = ~ chordDiagram(data_filtered))
 # wrap_plots(plot_list)

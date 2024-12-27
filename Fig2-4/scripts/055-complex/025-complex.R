@@ -1,50 +1,60 @@
 library(tidyverse)
-library(circlize)
-library(patchwork)
 
-df_go <- read_csv("reports/Fig3/055-go_rmats_deg.csv")
+df_all_symbol_go <- read_tsv("data/Fig5/mgi_symbol_go.txt", col_names = c("symbol", "go")) %>%
+    mutate(symbol = toupper(symbol))
 
-events <- df_go$event %>% unique()
-input_event <- "RI"
+df_complex_symbol_go <- read_csv("reports/Fig5/complex_go_symbol.csv")
 
-plot_list <- list()
+#########################
 
-dir.create("reports/Fig3/065-enrichr_to_circos", showWarnings = FALSE)
-for (input_event in events) {
-    data <- df_go %>%
-        filter(event == input_event) %>%
-        select(Term, from = ko_symbol) %>%
-        mutate(to = str_remove(Term, " \\(GO:.*")) %>%
-        select(-Term)
+df_go <- read_csv("reports/Fig4/enrichr_go_pathways.csv")
 
-    top_n <- 10
-    data_filtered <-
-        data %>%
-        count(to) %>%
-        arrange(desc(n)) %>%
-        slice_head(n = top_n) %>%
-        inner_join(data, by = "to") %>%
-        mutate(value = 1) %>%
-        distinct() %>%
-        select(from, to, value)
+data <- df_go %>%
+    select(Term, from = ko_symbol) %>%
+    mutate(to = str_remove(Term, " \\(GO:.*"))
 
-    jpeg(file = paste0("reports/Fig3/065-enrichr_to_circos/", input_event, ".jpg"), width = 1500, height = 1500, units = "px", res = 300)
-    par(cex = 0.5)
-    chordDiagram(data_filtered, transparency = 0.5, big.gap = 30)
-    title(input_event)
-    dev.off()
+top_n <- 10
+data_filtered <-
+    data %>%
+    count(to) %>%
+    arrange(desc(n)) %>%
+    slice_head(n = top_n) %>%
+    inner_join(data, by = "to") %>%
+    mutate(value = 1) %>%
+    distinct() %>%
+    select(from, to, value)
 
-    # pdf(file = paste0("reports/Fig3/065-enrichr_to_circos/", input_event, ".pdf"), width = 1500, height = 1500)
-    # par(cex = 0.5)
-    # chordDiagram(data_filtered, transparency = 0.5, big.gap = 30)
-    # title(input_event)
-    # dev.off()
-
+data_go_symbol <-
     data_filtered %>%
-        select(top_10 = to) %>%
-        distinct() %>%
-        write_csv(paste0("reports/Fig3/065-enrichr_to_circos/", input_event, ".csv"))
-}
+    select(to) %>%
+    inner_join(data, by = "to", relationship = "many-to-many") %>%
+    select(Term) %>%
+    distinct() %>%
+    inner_join(df_go, by = "Term") %>%
+    select(Term, Genes) %>%
+    group_by(Term) %>%
+    summarise(Genes = paste(Genes, collapse = ", ")) %>%
+    separate_longer_delim(Genes, delim = ";") %>%
+    separate_longer_delim(Genes, delim = ", ") %>%
+    distinct() %>%
+    mutate(go = stringr::str_extract(Term, "\\(GO:\\d+\\)") %>% stringr::str_remove_all("[()]")) %>%
+    select(Term, go, symbol = Genes)
+
+input_go <- "GO:0003723" # RNA binding
+data_symbols <- data_go_symbol %>% filter(go == input_go) %>% pull(symbol)
+all_symbols <- df_all_symbol_go %>% filter(go == input_go) %>% pull(symbol)
+complex_symbols <- df_complex_symbol_go %>% filter(go == input_go) %>% pull(symbol) %>% unique()
+
+overlap_data_complex <- data_symbols %in% complex_symbols
+overlap_all_complex <- all_symbols %in% complex_symbols
+
+a <- sum(overlap_data_complex)
+b <- sum(!overlap_data_complex)
+c <-sum (overlap_all_complex)
+d <- sum(!overlap_all_complex)
+vx = matrix(c(a,b,c,d),nrow=2,byrow=T)
+print(c(a,b,c,d))
+chisq.test(vx)
 
 # p <- wrap_elements(full = ~ chordDiagram(data_filtered))
 # wrap_plots(plot_list)

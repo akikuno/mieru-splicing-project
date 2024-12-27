@@ -17,7 +17,10 @@ conda install -n mieru -y \
     fastp star samtools bedtools subread rmats \
     r-base r-essentials r-extrafont \
     r-ggfortify r-ggrepel r-patchwork r-enrichr r-ggVennDiagram r-circlize \
-    bioconductor-deseq2
+    bioconductor-deseq2 \
+    bioconductor-genomeinfodbdata \
+    bioconductor-org.hs.eg.db \
+    bioconductor-org.Mm.eg.db
 
 conda activate mieru
 ```
@@ -27,3 +30,9 @@ conda activate mieru
 - `Fig1/data/fastq` (GSE XXXXX)
 - `Fig2-4/data/fastq` (GSE YYYYY)
 - `Fig2-4/data/rmats/original_output` (GSE YYYYY: contents of rMATS.zip)
+
+
+conda creante -n mieru2 -y \
+    r-base r-essentials \
+    bioconductor-org.hs.eg.db \
+    bioconductor-org.Mm.eg.db
