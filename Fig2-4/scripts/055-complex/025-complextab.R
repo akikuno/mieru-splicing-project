@@ -3,7 +3,7 @@ library(tidyverse)
 df_all_symbol_go <- read_tsv("data/Fig5/mgi_symbol_go.txt", col_names = c("symbol", "go")) %>%
     mutate(symbol = toupper(symbol))
 
-df_complex_symbol_go <- read_csv("reports/Fig5/complex_go_symbol.csv")
+df_complex_symbol_go <- read_csv("reports/Fig5/complextab_go_symbol.csv")
 
 #########################
 
@@ -40,22 +40,29 @@ data_go_symbol <-
     mutate(go = stringr::str_extract(Term, "\\(GO:\\d+\\)") %>% stringr::str_remove_all("[()]")) %>%
     select(Term, go, symbol = Genes)
 
-input_go <- "GO:0003723" # RNA binding
-data_symbols <- data_go_symbol %>% filter(go == input_go) %>% pull(symbol)
-all_symbols <- df_all_symbol_go %>% filter(go == input_go) %>% pull(symbol)
-complex_symbols <- df_complex_symbol_go %>% filter(go == input_go) %>% pull(symbol) %>% unique()
+results_fisher <- tibble()
+# input_go <- "GO:0003723" # RNA binding
+go_list <- data_go_symbol %>% pull(go) %>% unique()
+for (input_go in go_list) {
+    term <- data_go_symbol %>% filter(go == input_go) %>% pull(Term) %>% unique()
+    data_symbols <- data_go_symbol %>% filter(go == input_go) %>% pull(symbol)
+    all_symbols <- df_all_symbol_go %>% filter(go == input_go) %>% pull(symbol)
+    complex_symbols <- df_complex_symbol_go %>% filter(go == input_go) %>% pull(symbol) %>% unique()
 
-overlap_data_complex <- data_symbols %in% complex_symbols
-overlap_all_complex <- all_symbols %in% complex_symbols
+    overlap_data_complex <- data_symbols %in% complex_symbols
+    overlap_all_complex <- all_symbols %in% complex_symbols
 
-a <- sum(overlap_data_complex)
-b <- sum(!overlap_data_complex)
-c <-sum (overlap_all_complex)
-d <- sum(!overlap_all_complex)
-vx = matrix(c(a,b,c,d),nrow=2,byrow=T)
-print(c(a,b,c,d))
-chisq.test(vx)
+    a <- sum(overlap_data_complex)
+    b <- sum(!overlap_data_complex)
+    c <-sum (overlap_all_complex)
+    d <- sum(!overlap_all_complex)
+    vx <- matrix(c(a,b,c,d),nrow=2,byrow=T)
+    result <- fisher.test(vx)
+    sig <- ifelse(result$p.value < 0.05, "YES", "NO")
+    results_fisher <- bind_rows(results_fisher, tibble(term = term, significance = sig, p_value = result$p.value, odds_ratio = result$estimate, se_forming_complex = a, se_not_forming_complex = b, all_go_genes_forming_complex = c, all_go_genes_not_forming_complex = d))
+}
 
+write_csv(results_fisher, "reports/Fig5/fisher_complextab.csv")
 # p <- wrap_elements(full = ~ chordDiagram(data_filtered))
 # wrap_plots(plot_list)
 

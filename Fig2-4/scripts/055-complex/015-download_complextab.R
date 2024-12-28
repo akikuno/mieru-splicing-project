@@ -52,5 +52,5 @@ df_complex_go_symbol <- df_format %>%
     arrange(go, symbol)
 
 
-df_complex_go_symbol %>% write_csv("reports/Fig5/complex_go_symbol.csv")
+df_complex_go_symbol %>% write_csv("reports/Fig5/complextab_go_symbol.csv")
 df_complex_go_symbol %>% filter(go == "GO:0003723")
