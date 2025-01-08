@@ -1,22 +1,29 @@
+# Select human/mouse complex proteins with GO terms from ComplexTab
+
 library(tidyverse)
 library(janitor)
 library(org.Hs.eg.db)
 library(org.Mm.eg.db)
+
+dir.create("data/Fig5", showWarnings = FALSE)
 dir.create("reports/Fig5", showWarnings = FALSE)
 
-if (!file.exists("reports/Fig5/9606.rds")) {
+if (!file.exists("data/Fig5/10090.tsv")) {
     df_hs <- read_tsv("https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/9606.tsv") %>% clean_names()
     df_mm <- read_tsv("https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/10090.tsv") %>% clean_names()
-    saveRDS(df_hs, "reports/Fig5/9606.rds")
-    saveRDS(df_mm, "reports/Fig5/10090.rds")
-} else {
-    df_hs <- readRDS("reports/Fig5/9606.rds")
-    df_mm <- readRDS("reports/Fig5/10090.rds")
+    write_tsv(df_hs, "data/Fig5/9606.tsv")
+    write_tsv(df_mm, "data/Fig5/10090.tsv")
 }
+df_hs <- read_tsv("data/Fig5/9606.tsv") %>% mutate(organism = "human")
+df_mm <- read_tsv("data/Fig5/10090.tsv") %>% mutate(organism = "mouse")
+
+df_hs %>% dplyr::select(id = identifiers_and_stoichiometry_of_molecules_in_complex) %>% mutate(id = str_remove_all(id, "\\([^\\)]*\\)")) %>% separate_longer_delim(id, delim = "|") %>% distinct()
+df_mm %>% dplyr::select(id = identifiers_and_stoichiometry_of_molecules_in_complex) %>% mutate(id = str_remove_all(id, "\\([^\\)]*\\)")) %>% separate_longer_delim(id, delim = "|") %>% distinct()
 
 df_combine <- bind_rows(df_hs, df_mm)
+# df_combine <- df_mm
 df_format <- df_combine %>%
-    dplyr::select(go = go_annotations, id = identifiers_and_stoichiometry_of_molecules_in_complex) %>%
+    dplyr::select(go = go_annotations, id = identifiers_and_stoichiometry_of_molecules_in_complex, organism) %>%
     # カッコの中身だけを削除する
     mutate(go = str_remove_all(go, "\\([^\\)]*\\)")) %>%
     mutate(id = str_remove_all(id, "\\([^\\)]*\\)")) %>%
@@ -47,10 +54,10 @@ map_all <- bind_rows(map_hs, map_mm) %>%
 
 df_complex_go_symbol <- df_format %>%
     inner_join(map_all, by = c("id" = "id"), relationship = "many-to-many") %>%
-    dplyr::select(go, symbol) %>%
+    dplyr::select(go, symbol, organism) %>%
     distinct() %>%
-    arrange(go, symbol)
+    arrange(go, symbol, organism)
 
 
-df_complex_go_symbol %>% write_csv("reports/Fig5/complextab_go_symbol.csv")
 df_complex_go_symbol %>% filter(go == "GO:0003723")
+df_complex_go_symbol %>% write_csv("data/Fig5/complextab_go_symbol_organism.csv")
