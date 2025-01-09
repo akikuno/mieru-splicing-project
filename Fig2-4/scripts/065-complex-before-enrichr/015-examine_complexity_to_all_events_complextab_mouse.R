@@ -74,3 +74,5 @@ results_fisher %>% write_csv("reports/Fig5/fisher_complextab_mouse.csv")
 
 
 results_fisher %>% count(significance)
+
+results_fisher %>% count(event, significance)

@@ -72,3 +72,5 @@ results_fisher %>% filter(significance == "YES") %>% as.data.frame()
 results_fisher %>% write_csv("reports/Fig5/fisher_corum_mouse.csv")
 
 results_fisher %>% count(significance)
+
+results_fisher %>% count(event, significance)
