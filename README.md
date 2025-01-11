@@ -14,7 +14,8 @@ conda config --add channels conda-forge
 
 conda create -n mieru -y python=3.12
 conda install -n mieru -y \
-    fastp star samtools bedtools subread rmats \
+    fastp star samtools bedtools subread rmats rsem \
+    numpy pandas matplotlib seaborn plotnine \
     r-base r-essentials r-extrafont r-janitor \
     r-ggfortify r-ggrepel r-patchwork r-enrichr r-ggVennDiagram r-circlize \
     bioconductor-deseq2 \

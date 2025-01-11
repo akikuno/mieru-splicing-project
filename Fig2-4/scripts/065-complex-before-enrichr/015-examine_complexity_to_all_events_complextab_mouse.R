@@ -16,7 +16,7 @@ if (!file.exists("data/Fig5/mgi_protein_coding_symbols.txt")) {
 }
 df_mgi_genes <- read_tsv("data/Fig5/mgi_protein_coding_symbols.txt") %>% mutate(symbol = toupper(symbol))
 df_all <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv")
-df_complextab <- read_csv("data/Fig5/complextab_go_symbol_organism.csv")
+df_complextab <- read_csv("data/Fig5/complextab_name_go_symbol_organism.csv")
 
 
 df_spliced_genes <- df_all %>%

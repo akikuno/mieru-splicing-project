@@ -62,6 +62,6 @@ g_plot <-
 df_report <- df_results %>% select(-number_of_isoform) %>% distinct() %>%
     mutate(significance = ifelse(p_value < 0.05, "YES", "NO"))
 
-ggsave("reports/Fig5/complex_bias_number_of_isoform.jpg", g_plot, width = 10, height = 5)
-ggsave("reports/Fig5/complex_bias_number_of_isoform.pdf", g_plot, width = 10, height = 5)
-write_csv(df_report, "reports/Fig5/complex_bias_number_of_isoform.csv")
+ggsave("reports/Fig6/complex_bias_number_of_isoform.jpg", g_plot, width = 10, height = 5)
+ggsave("reports/Fig6/complex_bias_number_of_isoform.pdf", g_plot, width = 10, height = 5)
+write_csv(df_report, "reports/Fig6/complex_bias_number_of_isoform.csv")
