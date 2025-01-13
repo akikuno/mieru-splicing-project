@@ -53,9 +53,15 @@ for (input_ko_symbol in ko_symbols) {
 df_se_complex <- results_genes # %>% filter(event == "SE")
 
 input_ko_symbol <- "Cd2bp2"
-genes_se_complex <- df_se_complex %>% filter(ko_symbol == input_ko_symbol) %>% select(genes)
-df_ko_isoforms <- df_isoforms %>% filter(str_detect(sample, input_ko_symbol)) %>% inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
-df_mieru_isoforms <- df_isoforms %>% filter(str_detect(sample, "MIERU")) %>% inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
+genes_se_complex <- df_se_complex %>%
+    filter(ko_symbol == input_ko_symbol) %>%
+    select(genes)
+df_ko_isoforms <- df_isoforms %>%
+    filter(str_detect(sample, input_ko_symbol)) %>%
+    inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
+df_mieru_isoforms <- df_isoforms %>%
+    filter(str_detect(sample, "MIERU")) %>%
+    inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
 
 ###########################################################
 # エントロピーによるisoformの多様性を検定
@@ -63,9 +69,9 @@ df_mieru_isoforms <- df_isoforms %>% filter(str_detect(sample, "MIERU")) %>% inn
 
 # エントロピーを計算する関数
 calculate_entropy <- function(values) {
-  total_sum <- sum(values)
-  proportions <- values / total_sum
-  -sum(proportions * log(proportions), na.rm = TRUE)
+    total_sum <- sum(values)
+    proportions <- values / total_sum
+    -sum(proportions * log(proportions), na.rm = TRUE)
 }
 
 
@@ -98,4 +104,3 @@ ggplot(df_entropy, aes(x = sample, y = entropy, fill = group)) +
     theme_bw()
 
 t.test(df_ko_entropy$entropy, df_mieru_entropy$entropy)$p.value # 0.0004064736
-
