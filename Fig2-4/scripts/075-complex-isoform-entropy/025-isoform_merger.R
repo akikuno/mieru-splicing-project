@@ -3,27 +3,11 @@ library(janitor)
 
 directory_path <- "data/rsem/bam"
 
-df <- list.files(directory_path, full.names = TRUE) %>%
-    as_tibble() %>%
-    filter(str_detect(value, "isoforms.results")) %>%
-    map_dfr(., function(file_path) {
-        sample_name <- basename(file_path) %>% str_remove("\\..*$")
-        print(sample_name)
-        read_csv(file_path) %>%
-            clean_names() %>%
-            mutate(sample = sample_name)
-    })
-
-
-library(tidyverse)
-library(janitor)
-
-directory_path <- "data/rsem/bam"
-
 df_file_path <- list.files(directory_path, full.names = TRUE) %>%
     as_tibble() %>%
     set_names("file_path") %>%
-    filter(str_detect(file_path, "isoforms.results"))
+    filter(str_detect(file_path, "isoforms.results")) %>%
+    filter(str_detect(file_path, "Cd2bp2|MIERU|Qk|Ubr5"))
 
 df_isoform <- tibble()
 for (file_path in df_file_path$file_path) {
@@ -38,7 +22,7 @@ for (file_path in df_file_path$file_path) {
 
 print(df_isoform)
 
-dir.create("data/Fig7", )
+dir.create("data/Fig7", showWarnings = FALSE)
 df_isoform %>%
     mutate(gene_symbol = str_remove(gene_id, "^.*_")) %>%
     mutate(transcript_symbol = str_remove(transcript_id, "^.*_")) %>%

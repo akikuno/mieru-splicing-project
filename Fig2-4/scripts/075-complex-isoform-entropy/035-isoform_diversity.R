@@ -1,4 +1,6 @@
 library(tidyverse)
+library(patchwork)
+library(ggsignif)
 
 df_isoforms <- read_tsv("data/Fig7/tpm_isoforms_all.tsv") %>%
     mutate(genes = toupper(gene_symbol)) %>%
@@ -20,7 +22,10 @@ df_spliced_genes <- df_all %>%
     mutate(target_symbol = toupper(target_symbol)) %>%
     distinct()
 
-ko_symbols <- df_all$ko_symbol %>% unique()
+ko_symbols <- df_isoforms %>%
+    filter(group != "MIERU") %>%
+    pull(group) %>%
+    unique()
 events <- df_all$event %>% unique()
 
 
@@ -34,7 +39,7 @@ complex_genes <- df_complextab %>%
 
 # input_ko_symbol <- ko_symbols[1]
 # input_event <- "SE"
-results_genes <- tibble()
+df_complex <- tibble()
 for (input_ko_symbol in ko_symbols) {
     for (input_event in events) {
         spliced_genes <- df_spliced_genes %>%
@@ -42,7 +47,7 @@ for (input_ko_symbol in ko_symbols) {
             pull(target_symbol)
 
         overlap_spliced_complex <- spliced_genes %in% complex_genes
-        results_genes <- bind_rows(results_genes, tibble(
+        df_complex <- bind_rows(df_complex, tibble(
             ko_symbol = input_ko_symbol,
             event = input_event,
             genes = spliced_genes[overlap_spliced_complex]
@@ -50,57 +55,76 @@ for (input_ko_symbol in ko_symbols) {
     }
 }
 
-df_se_complex <- results_genes # %>% filter(event == "SE")
-
-input_ko_symbol <- "Cd2bp2"
-genes_se_complex <- df_se_complex %>%
-    filter(ko_symbol == input_ko_symbol) %>%
-    select(genes)
-df_ko_isoforms <- df_isoforms %>%
-    filter(str_detect(sample, input_ko_symbol)) %>%
-    inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
-df_mieru_isoforms <- df_isoforms %>%
-    filter(str_detect(sample, "MIERU")) %>%
-    inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
-
 ###########################################################
 # エントロピーによるisoformの多様性を検定
 ###########################################################
 
-# エントロピーを計算する関数
 calculate_entropy <- function(values) {
     total_sum <- sum(values)
     proportions <- values / total_sum
     -sum(proportions * log(proportions), na.rm = TRUE)
 }
 
+g_list <- list()
+df_t_test <- tibble()
+input_ko_symbol <- ko_symbols[1]
 
-df_entropy <- tibble()
+for (input_ko_symbol in ko_symbols) {
+    genes_se_complex <- df_complex %>%
+        filter(ko_symbol == input_ko_symbol) %>%
+        select(genes)
+    df_ko_isoforms <- df_isoforms %>%
+        filter(str_detect(sample, input_ko_symbol)) %>%
+        inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
+    df_mieru_isoforms <- df_isoforms %>%
+        filter(str_detect(sample, "MIERU")) %>%
+        inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
 
-df_ko_entropy <- df_ko_isoforms %>%
-    select(sample, genes, tpm, group) %>%
-    group_by(sample, genes) %>%
-    mutate(entropy = calculate_entropy(tpm)) %>%
-    ungroup() %>%
-    select(sample, group, entropy) %>%
-    distinct()
+    df_entropy <- tibble()
+
+    df_ko_entropy <- df_ko_isoforms %>%
+        select(sample, genes, tpm, group) %>%
+        group_by(sample, genes) %>%
+        mutate(entropy = calculate_entropy(tpm)) %>%
+        ungroup() %>%
+        select(sample, group, entropy) %>%
+        distinct()
 
 
-df_mieru_entropy <- df_mieru_isoforms %>%
-    select(sample, genes, tpm, group) %>%
-    group_by(sample, genes) %>%
-    mutate(entropy = calculate_entropy(tpm)) %>%
-    ungroup() %>%
-    select(sample, group, entropy) %>%
-    distinct()
+    df_mieru_entropy <- df_mieru_isoforms %>%
+        select(sample, genes, tpm, group) %>%
+        group_by(sample, genes) %>%
+        mutate(entropy = calculate_entropy(tpm)) %>%
+        ungroup() %>%
+        select(sample, group, entropy) %>%
+        distinct()
 
 
-df_entropy <- bind_rows(df_ko_entropy, df_mieru_entropy)
+    df_entropy <- bind_rows(df_ko_entropy, df_mieru_entropy)
 
-ggplot(df_entropy, aes(x = sample, y = entropy, fill = group)) +
-    geom_violin() +
-    geom_boxplot() +
-    labs(x = "sample", y = "Isoform diversity (entropy)") +
-    theme_bw()
+    df_entropy <- df_entropy %>%
+        mutate(group = factor(group, levels = c("MIERU", input_ko_symbol)))
 
-t.test(df_ko_entropy$entropy, df_mieru_entropy$entropy)$p.value # 0.0004064736
+    fill_values <- c("MIERU" = "white") %>%
+        c(setNames("#AAA", input_ko_symbol))
+
+    g_plot <- ggplot(df_entropy, aes(x = group, y = entropy, fill = group)) +
+        geom_violin() +
+        geom_boxplot(width = 0.1, fill = "white") +
+        geom_signif(
+            comparisons = list(c("MIERU", input_ko_symbol)),
+            test = "t.test", na.rm = FALSE, map_signif_level = TRUE, col = "black", step_increase = 0.1
+        ) +
+        scale_fill_manual(values = fill_values) +
+        labs(x = "Sample", y = "Isoform diversity (entropy)") +
+        theme_bw()
+
+    g_list[[input_ko_symbol]] <- g_plot
+    df_t_test <- bind_rows(df_t_test, tibble(ko_symbol = input_ko_symbol, p_value = t.test(df_ko_entropy$entropy, df_mieru_entropy$entropy)$p.value))
+}
+
+g_wrap <- wrap_plots(g_list, ncol = 4)
+
+# df_ko_isoforms <- df_isoforms %>%
+#     filter(!str_detect(sample, "MIERU")) %>%
+#     inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
