@@ -125,6 +125,7 @@ for (input_ko_symbol in ko_symbols) {
 
 g_wrap <- wrap_plots(g_list, ncol = 4)
 
+ggsave("reports/Fig7/isoform_diversity.png", g_wrap, width = 15, height = 5)
 # df_ko_isoforms <- df_isoforms %>%
 #     filter(!str_detect(sample, "MIERU")) %>%
 #     inner_join(genes_se_complex, by = "genes", relationship = "many-to-many")
