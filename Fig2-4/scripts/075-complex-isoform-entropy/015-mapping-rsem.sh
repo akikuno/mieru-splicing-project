@@ -20,7 +20,6 @@ grep fq.gz$ |
 sort |
 paste - - |
 sort -u |
-tail -n 12 |
 while read -r R1 R2; do
     filename=$(basename "${R1%_R1_*}" | cut -d "_" -f 1-3)
     
@@ -33,9 +32,12 @@ while read -r R1 R2; do
     echo "$filename" is now processing...
     echo "======================================"
     
-    zcat "$R1" >tmp_R1_"$filename".fq &
-    zcat "$R2" >tmp_R2_"$filename".fq &
-    time wait # 6 minutes
+    if ! [ -f tmp_R1_"$filename".fq ]; then
+        echo "$filename" is unzipping...
+        zcat "$R1" >tmp_R1_"$filename".fq &
+        zcat "$R2" >tmp_R2_"$filename".fq &
+        time wait # 6 minutes
+    fi
     
     time rsem-calculate-expression \
     --star \
