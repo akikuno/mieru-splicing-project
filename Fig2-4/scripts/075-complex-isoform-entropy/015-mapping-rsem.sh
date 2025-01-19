@@ -20,7 +20,6 @@ find data/fastq_trimmed -type f |
     sort |
     paste - - |
     sort -u |
-    tail -n 12 |
     while read -r R1 R2; do
         filename=$(basename "${R1%_R1_*}" | cut -d "_" -f 1-3)
 
