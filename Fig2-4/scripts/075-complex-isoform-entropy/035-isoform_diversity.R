@@ -132,7 +132,7 @@ for (input_ko_symbol in ko_symbols) {
             test = "t.test", test.args = list(paired = TRUE), na.rm = FALSE, map_signif_level = TRUE, col = "black", step_increase = 0.1
         ) +
         scale_fill_manual(values = fill_values) +
-        labs(x = "Sample", y = "Isoform diversity (entropy)") +
+        labs(x = "", y = "Isoform diversity (entropy)") +
         theme_bw()
 
     g_list[[input_ko_symbol]] <- g_plot
@@ -145,8 +145,8 @@ for (input_ko_symbol in ko_symbols) {
     ))
 }
 
-g_wrap <- wrap_plots(g_list, ncol = 4)
+g_wrap <- wrap_plots(g_list, ncol = 5)
 
-ggsave("reports/Fig7/isoform_diversity.png", g_wrap, width = 15, height = 10)
+ggsave("reports/Fig7/isoform_diversity.png", g_wrap, width = 20, height = 10)
 df_t_test %>%
-    write_tsv("reports/Fig7/isoform_diversity_t_test.tsv")
+    write_csv("reports/Fig7/isoform_diversity_t_test.csv")
