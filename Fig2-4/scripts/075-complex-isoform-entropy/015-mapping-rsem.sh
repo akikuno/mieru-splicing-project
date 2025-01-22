@@ -20,6 +20,7 @@ find data/fastq_trimmed -type f |
     sort |
     paste - - |
     sort -u |
+    # grep "Strap_KO_4" |
     while read -r R1 R2; do
         filename=$(basename "${R1%_R1_*}" | cut -d "_" -f 1-3)
 
