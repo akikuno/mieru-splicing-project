@@ -7,7 +7,7 @@ df_file_path <- list.files(directory_path, full.names = TRUE) %>%
     as.data.frame() %>%
     set_names("file_path") %>%
     filter(str_detect(file_path, "isoforms.results")) %>%
-    filter(str_detect(file_path, "Cd2bp2|MIERU|Qk|Rbm24|Spen|Trim71|Ubr5|Wt1|Ybx1|Rpl22l1"))
+    filter(!str_detect(file_path, "Rbm15"))
 
 df_isoform <- tibble()
 for (file_path in df_file_path$file_path) {
