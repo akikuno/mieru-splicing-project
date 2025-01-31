@@ -1,3 +1,6 @@
+###############################################################################
+# Aim: To calculate the odds ratio of the enrichment of spliced genes forming complex and not forming complex
+###############################################################################
 library(tidyverse)
 library(janitor)
 
@@ -98,34 +101,26 @@ results_fisher <- results_fisher %>%
         TRUE ~ "" # 条件を満たさない場合は空白
     ))
 
+colors <- c("#44ED8B", "#FF2FC1", "#3FAFFF", "#FFE270", "#FF604E")
+names(colors) <- c("A3SS", "A5SS", "MXE", "RI", "SE")
+
 # ggplot2で棒グラフとアスタリスクを描画
-g_barplot_by_event <- results_fisher %>%
-    ggplot(aes(x = ko_symbol, y = odds_ratio, fill = event)) +
-    geom_col(position = position_dodge(width = 0.9)) + # 棒グラフ
+g_barplot <- results_fisher %>%
+    ggplot(aes(x = event, y = odds_ratio, fill = event)) +
+    geom_col(position = position_dodge(width = 0.9), color = "#333") + # 棒グラフ
     geom_hline(yintercept = 1, linetype = "dashed", color = "#333") + # y=1に線を描画
     geom_text(
         aes(label = asterisk, y = odds_ratio + 0.1), # アスタリスクをodds_ratioの少し上に配置
         position = position_dodge(width = 0.9),
         vjust = 0
     ) +
+    scale_fill_manual(name = "Event", values = colors) +
     theme_bw() +
     # X軸のラベルを45度回転
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    facet_wrap(~event, scales = "fixed", nrow = 1)
+    labs(x = "", y = "Enrichment (odds ratio)", legend = "Event") +
+    facet_wrap(~ko_symbol, scales = "fixed", nrow = 2)
 
-# g_barplot_by_ko <- results_fisher %>%
-#     ggplot(aes(x = event, y = odds_ratio, fill = ko_symbol)) +
-#     geom_col(position = position_dodge(width = 0.9)) + # 棒グラフ
-#     geom_hline(yintercept = 1, linetype = "dashed", color = "#333") + # y=1に線を描画
-#     geom_text(
-#         aes(label = asterisk, y = odds_ratio + 0.1), # アスタリスクをodds_ratioの少し上に配置
-#         position = position_dodge(width = 0.9),
-#         vjust = 0
-#     ) +
-#     theme_bw() +
-#     # X軸のラベルを45度回転
-#     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-#     facet_wrap(~ko_symbol, scales = "fixed", nrow = 1)
 
-ggsave("reports/Fig5/barplot_odds_complextab_human_mouse.jpg", g_barplot_by_event, width = 15, height = 5)
-ggsave("reports/Fig5/barplot_odds_complextab_human_mouse.pdf", g_barplot_by_event, width = 15, height = 5)
+ggsave("reports/Fig5/barplot_odds_complextab_human_mouse.jpg", g_barplot, width = 15, height = 8)
+ggsave("reports/Fig5/barplot_odds_complextab_human_mouse.pdf", g_barplot, width = 15, height = 8)
