@@ -1,6 +1,5 @@
 ###########################################################
 # Q 群間でのエントロピーのばらつきは大きいか？
-# → デンドログラム、ヒートマップで示す
 ###########################################################
 
 library(tidyverse)
@@ -10,10 +9,11 @@ library(ggsignif)
 df_isoforms <- read_tsv("data/Fig7/tpm_isoforms_all.tsv.gz") %>%
     mutate(genes = toupper(gene_symbol)) %>%
     mutate(group = str_remove(sample, "_.*$")) %>%
-    # すべてのサンプルにおいて、IsoformのTPMの総和が10以上の遺伝子のみを抽出
-    group_by(sample, genes) %>%
-    filter(sum(tpm) >= 10) %>%
+    # グループにおいて、IsoformのTPMの平均が1以上の遺伝子のみを抽出
+    group_by(group, genes) %>%
+    filter(mean(tpm) >= 1) %>%
     ungroup()
+
 
 df_homology <- read_tsv("data/Fig5/mgi_homology_symbols.txt")
 df_all <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv")

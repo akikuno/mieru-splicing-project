@@ -4,7 +4,11 @@ library(ggsignif)
 
 df_isoforms <- read_tsv("data/Fig7/tpm_isoforms_all.tsv.gz") %>%
     mutate(genes = toupper(gene_symbol)) %>%
-    mutate(group = str_remove(sample, "_.*$"))
+    mutate(group = str_remove(sample, "_.*$")) %>%
+    # グループにおいて、IsoformのTPMの平均が1以上の遺伝子のみを抽出
+    group_by(group, genes) %>%
+    filter(mean(tpm) >= 1) %>%
+    ungroup()
 
 df_homology <- read_tsv("data/Fig5/mgi_homology_symbols.txt")
 df_all <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv")
@@ -83,11 +87,6 @@ for (input_ko_symbol in ko_symbols) {
     df_entropy <- tibble()
 
     df_ko_entropy <- df_ko_isoforms %>%
-        select(sample, genes, tpm, group) %>%
-        # すべてのサンプルにおいて、IsoformのTPMの総和が10以上の遺伝子のみを抽出
-        group_by(sample, genes) %>%
-        filter(sum(tpm) >= 10) %>%
-        ungroup() %>%
         # グループごとに、エントロピーを計算
         group_by(group, genes) %>%
         mutate(entropy = calculate_entropy(tpm)) %>%
@@ -96,11 +95,6 @@ for (input_ko_symbol in ko_symbols) {
         distinct()
 
     df_mieru_entropy <- df_mieru_isoforms %>%
-        select(sample, genes, tpm, group) %>%
-        # すべてのサンプルにおいて、IsoformのTPMの総和が10以上の遺伝子のみを抽出
-        group_by(sample, genes) %>%
-        filter(sum(tpm) >= 10) %>%
-        ungroup() %>%
         # グループごとに、エントロピーを計算
         group_by(group, genes) %>%
         mutate(entropy = calculate_entropy(tpm)) %>%

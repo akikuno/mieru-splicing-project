@@ -1,5 +1,5 @@
 ###########################################################
-# エントロピーとdPSIの相関
+# 多様性が高い遺伝子ほど、dPSIが大きいかどうかを検証
 ###########################################################
 
 library(tidyverse)
@@ -8,56 +8,20 @@ library(ggsignif)
 
 df_isoforms <- read_tsv("data/Fig7/tpm_isoforms_all.tsv.gz") %>%
     mutate(genes = toupper(gene_symbol)) %>%
-    mutate(group = str_remove(sample, "_.*$"))
+    mutate(group = str_remove(sample, "_.*$")) %>%
+    # グループにおいて、IsoformのTPMの平均が1以上の遺伝子のみを抽出
+    group_by(group, genes) %>%
+    filter(mean(tpm) >= 1) %>%
+    ungroup()
 
-df_homology <- read_tsv("data/Fig5/mgi_homology_symbols.txt")
-df_all <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv")
-
-# Complexのデータの、ヒトの遺伝子をマウスの遺伝子に変更する
-df_complextab <- read_csv("data/Fig5/complextab_name_go_symbol_organism.csv")
-df_complextab <- df_complextab %>%
-    left_join(df_homology, by = c("symbol" = "human")) %>% # human symbolに対応するmouse symbolを結合
-    mutate(symbol = ifelse(organism == "human" & !is.na(mouse), mouse, symbol)) %>% # humanの場合のみsymbolを変換
-    select(-mouse)
-
-df_spliced_genes <- df_all %>%
-    filter(fdr < 0.05, abs(dpsi) > 0.1) %>%
-    select(event, ko_symbol, target_symbol) %>%
-    mutate(target_symbol = toupper(target_symbol)) %>%
-    distinct()
+df_all <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv") %>%
+    mutate(target_symbol = toupper(target_symbol))
 
 ko_symbols <- df_isoforms %>%
     filter(group != "MIERU") %>%
     pull(group) %>%
     unique()
 events <- df_all$event %>% unique()
-
-
-###############################################################################
-# ヒトとマウスの複合体
-###############################################################################
-
-complex_genes <- df_complextab %>%
-    pull(symbol) %>%
-    unique()
-
-# input_ko_symbol <- ko_symbols[1]
-# input_event <- "SE"
-df_complex <- tibble()
-for (input_ko_symbol in ko_symbols) {
-    for (input_event in events) {
-        spliced_genes <- df_spliced_genes %>%
-            filter(ko_symbol == input_ko_symbol, event == input_event) %>%
-            pull(target_symbol)
-
-        overlap_spliced_complex <- spliced_genes %in% complex_genes
-        df_complex <- bind_rows(df_complex, tibble(
-            ko_symbol = input_ko_symbol,
-            event = input_event,
-            genes = spliced_genes[overlap_spliced_complex]
-        ))
-    }
-}
 
 ###########################################################
 # エントロピーによるisoformの多様性を検定
@@ -69,9 +33,53 @@ calculate_entropy <- function(values) {
     -sum(proportions * log(proportions), na.rm = TRUE)
 }
 
+
+df_entropy <- df_isoforms %>%
+    # グループごとに、エントロピーを計算
+    group_by(group, genes) %>%
+    mutate(entropy = calculate_entropy(tpm)) %>%
+    ungroup() %>%
+    select(group, genes, entropy) %>%
+    distinct()
+
+df_mean_dpsi <- df_all %>%
+    group_by(event, ko_symbol, target_symbol) %>%
+    summarise(mean_dpsi = mean(dpsi)) %>%
+    ungroup()
+
+for (input_event in events) {
+    for (input_ko_symbol in ko_symbols) {
+        df_dpsi <- df_mean_dpsi %>%
+            filter(event == input_event, ko_symbol == input_ko_symbol) %>%
+            select(target_symbol, mean_dpsi)
+
+        df_entropy_dpsi <- inner_join(df_entropy, df_dpsi, by = c("genes" = "target_symbol"))
+
+        g_plot <- ggplot(df_entropy_dpsi, aes(x = entropy, y = mean_dpsi)) +
+            geom_point() +
+            geom_smooth(method = "lm") +
+            labs(x = "Isoform diversity (entropy)", y = "Mean dPSI") +
+            theme_bw()
+
+        ggsave(paste0("reports/Fig7/isoform_diversity_correlation_of_dpsi_", input_event, "_", input_ko_symbol, ".png"), g_plot, width = 5, height = 5)
+    }
+}
+
 g_list <- list()
 df_t_test <- tibble()
 input_ko_symbol <- ko_symbols[1]
+
+
+df_mieru_isoforms <- df_isoforms %>% filter(str_detect(sample, "MIERU"))
+df_mieru_entropy <- df_mieru_isoforms %>%
+    select(sample, genes, tpm, group) %>%
+    # グループごとに、エントロピーを計算
+    group_by(group, genes) %>%
+    mutate(entropy = calculate_entropy(tpm)) %>%
+    ungroup() %>%
+    select(group, genes, entropy) %>%
+    distinct()
+
 
 for (input_ko_symbol in ko_symbols) {
     genes_complex <- df_complex %>%
