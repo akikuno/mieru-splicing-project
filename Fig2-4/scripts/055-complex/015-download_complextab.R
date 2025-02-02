@@ -17,6 +17,7 @@ if (!file.exists("data/Fig5/10090.tsv")) {
 df_hs <- read_tsv("data/Fig5/9606.tsv") %>% mutate(organism = "human")
 df_mm <- read_tsv("data/Fig5/10090.tsv") %>% mutate(organism = "mouse")
 
+# df_hs %>% filter(recommended_name == "Cyclin L1-CDK11A(p110) complex") %>% select(accession = number_complex_ac, id = identifiers_and_stoichiometry_of_molecules_in_complex)
 df_hs %>%
     dplyr::select(id = identifiers_and_stoichiometry_of_molecules_in_complex) %>%
     mutate(id = str_remove_all(id, "\\([^\\)]*\\)")) %>%

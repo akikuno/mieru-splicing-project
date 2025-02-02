@@ -19,7 +19,7 @@ df_mgi_genes <- read_tsv("data/Fig5/mgi_protein_coding_symbols.txt") %>% mutate(
 df_all <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv")
 
 # Complexのデータの、ヒトの遺伝子をマウスの遺伝子に変更する
-df_complextab <- read_csv("data/Fig5/complextab_go_symbol_organism.csv")
+df_complextab <- read_csv("data/Fig5/complextab_name_go_symbol_organism.csv")
 df_complextab <- df_complextab %>%
     left_join(df_homology, by = c("symbol" = "human")) %>% # human symbolに対応するmouse symbolを結合
     mutate(symbol = ifelse(organism == "human" & !is.na(mouse), mouse, symbol)) %>% # humanの場合のみsymbolを変換
@@ -32,8 +32,6 @@ df_spliced_genes <- df_all %>%
     distinct()
 
 ko_symbols <- df_all$ko_symbol %>% unique()
-events <- df_all$event %>% unique()
-
 
 ###############################################################################
 # ヒトとマウスの複合体
@@ -46,38 +44,36 @@ complex_genes <- df_complextab %>%
 # input_event <- events[1]
 results_fisher <- tibble()
 for (input_ko_symbol in ko_symbols) {
-    for (input_event in events) {
-        spliced_genes <- df_spliced_genes %>%
-            filter(ko_symbol == input_ko_symbol, event == input_event) %>%
-            pull(target_symbol)
-        non_spliced_genes <- df_mgi_genes %>%
-            filter(!symbol %in% spliced_genes) %>%
-            pull(symbol)
+    spliced_genes <- df_spliced_genes %>%
+        filter(ko_symbol == input_ko_symbol) %>%
+        pull(target_symbol)
 
-        print(c(input_ko_symbol, input_event, length(spliced_genes), length(non_spliced_genes)))
+    non_spliced_genes <- df_mgi_genes %>%
+        filter(!symbol %in% spliced_genes) %>%
+        pull(symbol)
 
-        overlap_spliced_complex <- spliced_genes %in% complex_genes
-        overlap_non_spliced_complex <- non_spliced_genes %in% complex_genes
+    print(c(input_ko_symbol, length(spliced_genes), length(non_spliced_genes)))
 
-        a <- sum(overlap_spliced_complex)
-        b <- sum(!overlap_spliced_complex)
-        c <- sum(overlap_non_spliced_complex)
-        d <- sum(!overlap_non_spliced_complex)
-        vx <- matrix(c(a, b, c, d), nrow = 2, byrow = T)
-        result <- fisher.test(vx)
-        sig <- ifelse(result$p.value < 0.05, "YES", "NO")
-        results_fisher <- bind_rows(results_fisher, tibble(
-            ko_symbol = input_ko_symbol,
-            event = input_event,
-            significance = sig,
-            p_value = result$p.value,
-            odds_ratio = result$estimate,
-            spliced_genes_forming_complex = a,
-            spliced_genes_not_forming_complex = b,
-            non_spliced_genes_forming_complex = c,
-            non_spliced_genes_not_forming_complex = d
-        ))
-    }
+    overlap_spliced_complex <- spliced_genes %in% complex_genes
+    overlap_non_spliced_complex <- non_spliced_genes %in% complex_genes
+
+    a <- sum(overlap_spliced_complex)
+    b <- sum(!overlap_spliced_complex)
+    c <- sum(overlap_non_spliced_complex)
+    d <- sum(!overlap_non_spliced_complex)
+    vx <- matrix(c(a, b, c, d), nrow = 2, byrow = T)
+    result <- fisher.test(vx)
+    sig <- ifelse(result$p.value < 0.05, "YES", "NO")
+    results_fisher <- bind_rows(results_fisher, tibble(
+        ko_symbol = input_ko_symbol,
+        significance = sig,
+        p_value = result$p.value,
+        odds_ratio = result$estimate,
+        spliced_genes_forming_complex = a,
+        spliced_genes_not_forming_complex = b,
+        non_spliced_genes_forming_complex = c,
+        non_spliced_genes_not_forming_complex = d
+    ))
 }
 
 results_fisher %>%
@@ -101,26 +97,26 @@ results_fisher <- results_fisher %>%
         TRUE ~ "" # 条件を満たさない場合は空白
     ))
 
-colors <- c("#44ED8B", "#FF2FC1", "#3FAFFF", "#FFE270", "#FF604E")
-names(colors) <- c("A3SS", "A5SS", "MXE", "RI", "SE")
-
 # ggplot2で棒グラフとアスタリスクを描画
 g_barplot <- results_fisher %>%
-    ggplot(aes(x = event, y = odds_ratio, fill = event)) +
-    geom_col(position = position_dodge(width = 0.9), color = "#333") + # 棒グラフ
+    ggplot(aes(x = ko_symbol, y = odds_ratio)) +
+    geom_col(position = position_dodge(width = 0.9), color = "#333", fill = "#fff") + # 棒グラフ
     geom_hline(yintercept = 1, linetype = "dashed", color = "#333") + # y=1に線を描画
     geom_text(
         aes(label = asterisk, y = odds_ratio + 0.1), # アスタリスクをodds_ratioの少し上に配置
         position = position_dodge(width = 0.9),
         vjust = 0
     ) +
-    scale_fill_manual(name = "Event", values = colors) +
     theme_bw() +
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 14), # x軸ラベル
+        axis.text.y = element_text(size = 18), # y軸ラベル
+        axis.title = element_text(size = 20), # 軸タイトル
+        legend.text = element_text(size = 18), # 凡例の文字
+    ) +
     # X軸のラベルを45度回転
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(x = "", y = "Enrichment (odds ratio)", legend = "Event") +
-    facet_wrap(~ko_symbol, scales = "fixed", nrow = 2)
-
+    labs(x = "", y = "Enrichment (odds ratio)")
 
 ggsave("reports/Fig5/barplot_odds_complextab_human_mouse.jpg", g_barplot, width = 15, height = 8)
 ggsave("reports/Fig5/barplot_odds_complextab_human_mouse.pdf", g_barplot, width = 15, height = 8)
