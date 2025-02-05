@@ -35,3 +35,6 @@ df_spliced_genes %>%
     filter(n > 1) %>%
     print(.)
 }
+
+# count > 1のものがないので、ヒートマップは使えなさそう
+# Complex PortalにアノテーションされているGOで、共通性の高いものを探してみる？
