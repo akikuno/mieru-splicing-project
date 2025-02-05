@@ -12,7 +12,7 @@ conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
 
-conda create -n mieru -y python=3.12
+conda create -n mieru -y python=3.11
 conda install -n mieru -y \
     fastp star samtools bedtools subread rmats rsem \
     numpy pandas matplotlib seaborn plotnine \
@@ -22,7 +22,8 @@ conda install -n mieru -y \
     bioconductor-deseq2 \
     bioconductor-genomeinfodbdata \
     bioconductor-org.hs.eg.db \
-    bioconductor-org.Mm.eg.db
+    bioconductor-org.Mm.eg.db \
+    bioconductor-clusterprofiler
 
 conda activate mieru
 ```

@@ -33,6 +33,49 @@ events <- df_all$event %>% unique()
 ###############################################################################
 
 complex_genes <- df_complextab %>% pull(symbol) %>% unique()
+
+# -----------------------------------------------------------------------------
+# KOごと
+# -----------------------------------------------------------------------------
+
+# input_ko_symbol <- ko_symbols[1]
+# input_event <- events[1]
+results_fisher <- tibble()
+for (input_ko_symbol in ko_symbols){
+    spliced_genes <- df_spliced_genes %>% filter(ko_symbol == input_ko_symbol) %>% pull(target_symbol)
+    non_spliced_genes <- df_mgi_genes %>% filter(!symbol %in% spliced_genes) %>% pull(symbol)
+
+    print(c(input_ko_symbol, input_event, length(spliced_genes), length(non_spliced_genes)))
+
+    overlap_spliced_complex <- spliced_genes %in% complex_genes
+    overlap_non_spliced_complex <- non_spliced_genes %in% complex_genes
+
+    a <- sum(overlap_spliced_complex)
+    b <- sum(!overlap_spliced_complex)
+    c <- sum (overlap_non_spliced_complex)
+    d <- sum(!overlap_non_spliced_complex)
+    vx <- matrix(c(a,b,c,d),nrow=2,byrow=T)
+    result <- fisher.test(vx)
+    sig <- ifelse(result$p.value < 0.05, "YES", "NO")
+    results_fisher <- bind_rows(results_fisher, tibble(
+        ko_symbol = input_ko_symbol,
+        event = input_event,
+        significance = sig,
+        p_value = result$p.value,
+        odds_ratio = result$estimate,
+        spliced_genes_forming_complex = a,
+        spliced_genes_not_forming_complex = b,
+        non_spliced_genes_forming_complex = c,
+        non_spliced_genes_not_forming_complex = d)
+        )
+}
+
+results_fisher %>% write_csv("reports/Fig5/fisher_complextab_mouse.csv")
+results_fisher %>% count(significance)
+
+# -----------------------------------------------------------------------------
+# KOごと + Eventごと
+# -----------------------------------------------------------------------------
 # input_ko_symbol <- ko_symbols[1]
 # input_event <- events[1]
 results_fisher <- tibble()
@@ -69,9 +112,6 @@ for (input_ko_symbol in ko_symbols){
 
 results_fisher %>% filter(significance == "YES") %>% as.data.frame()
 
-results_fisher %>% write_csv("reports/Fig5/fisher_complextab_mouse.csv")
-
-
+results_fisher %>% write_csv("reports/Fig5/fisher_complextab_mouse_by_events.csv")
 results_fisher %>% count(significance)
-
 results_fisher %>% count(event, significance)

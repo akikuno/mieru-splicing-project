@@ -13,7 +13,8 @@ if (!file.exists("data/Fig5/10090.tsv")) {
     write_tsv(df_mm, "data/Fig5/10090.tsv")
 }
 # df_hs <- read_tsv("data/Fig5/9606.tsv") %>% select(taxon_id = taxonomy_identifier, uniprot = identifiers_and_stoichiometry_of_molecules_in_complex, ac = number_complex_ac, name = recommended_name)
-df_mm <- read_tsv("data/Fig5/10090.tsv") %>% select(taxon_id = taxonomy_identifier, uniprot = identifiers_and_stoichiometry_of_molecules_in_complex, ac = number_complex_ac, name = recommended_name)
+df_mm <- read_tsv("data/Fig5/10090.tsv") %>%
+    select(taxon_id = taxonomy_identifier, uniprot = identifiers_and_stoichiometry_of_molecules_in_complex, go = go_annotations, name = recommended_name)
 
 
 ###########################################################
@@ -26,10 +27,13 @@ df_format <-
     df_mm %>%
     # カッコの中身だけを削除する
     mutate(uniprot = str_remove_all(uniprot, "\\([^\\)]*\\)")) %>%
+    mutate(go = str_remove_all(go, "\\([^\\)]*\\)")) %>%
     # "-"以下を削除する
     mutate(uniprot = str_remove(uniprot, "-.*")) %>%
+    mutate(go = str_remove(go, "-.*")) %>%
     # | で区切られたところを展開する
-    separate_longer_delim(uniprot, delim = "|")
+    separate_longer_delim(uniprot, delim = "|") %>%
+    separate_longer_delim(go, delim = "|")
 
 # UNIPROT IDをGene Symbolに変換する
 
