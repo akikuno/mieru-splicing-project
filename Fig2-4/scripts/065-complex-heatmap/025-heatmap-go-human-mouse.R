@@ -9,9 +9,10 @@ library(tidyverse)
 library(org.Mm.eg.db)
 library(clusterProfiler)
 
-df_complextab <- read_csv("data/Fig5/complextab_human_mouse.csv")
 df_mgi_genes <- read_tsv("data/Fig5/mgi_protein_coding_symbols.txt")
 df_all <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv")
+
+df_complextab <- read_csv("data/Fig5/complextab_human_mouse.csv")
 df_go_annotation <- read_csv("data/Fig6/go_annotation_human_mouse.csv")
 
 df_spliced_genes <- df_all %>%
@@ -30,10 +31,9 @@ go_complex_genes <- df_complextab %>% count(go)
 genes_complex <- df_complextab$symbol %>% unique()
 
 go_enrichments <- tibble()
+
 for (input_ko_symbol in ko_symbols) {
     spliced_genes <- df_spliced_genes %>% filter(ko_symbol == input_ko_symbol) %>% select(symbol = target_symbol) %>% distinct()
-    non_spliced_genes <- df_mgi_genes %>% filter(!symbol %in% spliced_genes) %>% select(symbol) %>% distinct()
-    print(c(input_ko_symbol, nrow(non_spliced_genes), nrow(spliced_genes)))
     spliced_genes_with_complex <- spliced_genes %>% filter(symbol %in% genes_complex) %>% pull(symbol) %>% unique()
 
     go_enrichment <- enrichGO(gene = spliced_genes_with_complex,
@@ -49,4 +49,21 @@ for (input_ko_symbol in ko_symbols) {
         bind_rows(go_enrichments)
 }
 
-go_enrichments %>% filter(ko_symbol == "Strap")
+go_enrichments <- go_enrichments %>% janitor::clean_names()
+
+write_csv(go_enrichments, "data/Fig6/go_enrichments.csv")
+
+
+go_enrichments %>% filter(ko_symbol == "Strap") %>%
+    select(ko_symbol, ID, Description, FoldEnrichment, qvalue, geneID, GeneRatio)
+
+go_enrichments %>%
+    janitor::clean_names() %>%
+    add_count(description, name = "go_count") %>%
+    filter(go_count > 8) %>%
+    select(description, gene_id) %>%
+    distinct() %>%
+    pull()
+
+# gene_idの要素が90%以上マッチしているものは、同一のGOとして、qvalueがもっとも低いものを選択する
+
