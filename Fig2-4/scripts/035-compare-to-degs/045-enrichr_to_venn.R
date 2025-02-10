@@ -4,7 +4,7 @@ library(patchwork)
 library(ggVennDiagram)
 library(enrichR)
 
-df_se <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv") %>% filter(fdr < 0.05, abs(dpsi) > 0.1) %>% filter(event == "SE")
+df_spliced <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv") %>% filter(fdr < 0.05, abs(dpsi) > 0.1)
 
 df_deg <- read_csv("data/degs/ko_vs_mieru.csv")
 
@@ -52,7 +52,7 @@ dbs <- c("GO_Molecular_Function_2023", "GO_Biological_Process_2023", "GO_Cellula
 enrichr_pathways <- tibble()
 for (input_ko_symbol in ko_symbols) {
         deg <- df_deg %>% filter(ko_symbol == input_ko_symbol) %>% pull(target_symbol) %>% unique() %>% toupper()
-        rmats <- df_se %>% filter(ko_symbol == input_ko_symbol) %>% pull(target_symbol) %>% unique() %>% toupper()
+        rmats <- df_spliced %>% filter(ko_symbol == input_ko_symbol) %>% pull(target_symbol) %>% unique() %>% toupper()
 
         gene_sets <- list(deg = deg, rmats = rmats)
 
@@ -87,9 +87,9 @@ write_csv(enrichr_pathways, "reports/Fig3/045-go_se_deg.csv")
 
 venn_list <-
     map(ko_symbols, function(input_ko_symbol) {
-        go_deg <- enrichr_pathways %>% filter(ko_symbol == input_ko_symbol, type == "deg") %>% pull(Term)
-        go_rmats <- enrichr_pathways %>% filter(ko_symbol == input_ko_symbol, type == "rmats") %>% pull(Term)
-        go_list <- list(DEG = go_deg, SE = go_rmats)
+        go_deg <- enrichr_pathways %>% filter(ko_symbol == input_ko_symbol, type == "deg") %>% pull(Term) %>% unique()
+        go_rmats <- enrichr_pathways %>% filter(ko_symbol == input_ko_symbol, type == "rmats") %>% pull(Term) %>% unique()
+        go_list <- list(DEG = go_deg, DSG = go_rmats)
         ggVennDiagram(go_list) + labs(title = input_ko_symbol) + scale_fill_gradient(low="#EEE",high = "#FF604E")
     })
 
@@ -102,5 +102,5 @@ g_venn <- wrap_plots(venn_list, nrow = 3)
 width <- 18
 height <- 18
 dir.create("reports/Fig3/", showWarnings = FALSE)
-ggsave("reports/Fig3/045-venn_go_se_deg.pdf", g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
-ggsave("reports/Fig3/045-venn_go_se_deg.jpg", g_venn, width = width, height = height)
+ggsave("reports/Fig3/045-venn_go_dsg_deg.pdf", g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
+ggsave("reports/Fig3/045-venn_go_dsg_deg.jpg", g_venn, width = width, height = height)
