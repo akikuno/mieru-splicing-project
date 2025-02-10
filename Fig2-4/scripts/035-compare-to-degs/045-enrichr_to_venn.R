@@ -50,9 +50,18 @@ dbs <- c("GO_Molecular_Function_2023", "GO_Biological_Process_2023", "GO_Cellula
 ###########################################################
 
 enrichr_pathways <- tibble()
-for (input_ko_symbol in ko_symbols) {
-        deg <- df_deg %>% filter(ko_symbol == input_ko_symbol) %>% pull(target_symbol) %>% unique() %>% toupper()
-        rmats <- df_spliced %>% filter(ko_symbol == input_ko_symbol) %>% pull(target_symbol) %>% unique() %>% toupper()
+if (!file.exists("reports/Fig3/045-go_se_deg.csv")) {
+    for (input_ko_symbol in ko_symbols) {
+        deg <- df_deg %>%
+            filter(ko_symbol == input_ko_symbol) %>%
+            pull(target_symbol) %>%
+            unique() %>%
+            toupper()
+        rmats <- df_spliced %>%
+            filter(ko_symbol == input_ko_symbol) %>%
+            pull(target_symbol) %>%
+            unique() %>%
+            toupper()
 
         gene_sets <- list(deg = deg, rmats = rmats)
 
@@ -77,9 +86,10 @@ for (input_ko_symbol in ko_symbols) {
             }
         }
     }
+    write_csv(enrichr_pathways, "reports/Fig3/045-go_se_deg.csv")
+}
 
-write_csv(enrichr_pathways, "reports/Fig3/045-go_se_deg.csv")
-
+enrichr_pathways <- read_csv("reports/Fig3/045-go_se_deg.csv")
 
 ###########################################################
 # Plot Venn Diagram
@@ -87,10 +97,16 @@ write_csv(enrichr_pathways, "reports/Fig3/045-go_se_deg.csv")
 
 venn_list <-
     map(ko_symbols, function(input_ko_symbol) {
-        go_deg <- enrichr_pathways %>% filter(ko_symbol == input_ko_symbol, type == "deg") %>% pull(Term) %>% unique()
-        go_rmats <- enrichr_pathways %>% filter(ko_symbol == input_ko_symbol, type == "rmats") %>% pull(Term) %>% unique()
+        go_deg <- enrichr_pathways %>%
+            filter(ko_symbol == input_ko_symbol, type == "deg") %>%
+            pull(Term) %>%
+            unique()
+        go_rmats <- enrichr_pathways %>%
+            filter(ko_symbol == input_ko_symbol, type == "rmats") %>%
+            pull(Term) %>%
+            unique()
         go_list <- list(DEG = go_deg, DSG = go_rmats)
-        ggVennDiagram(go_list) + labs(title = input_ko_symbol) + scale_fill_gradient(low="#EEE",high = "#FF604E")
+        ggVennDiagram(go_list) + labs(title = input_ko_symbol) + scale_fill_gradient(low = "#EEE", high = "#FF604E") + theme(text = element_text(size = 20))
     })
 
 g_venn <- wrap_plots(venn_list, nrow = 3)

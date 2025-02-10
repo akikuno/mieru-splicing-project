@@ -8,7 +8,6 @@ df_spliced <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv") %>% filte
 df_deg <- read_csv("data/degs/ko_vs_mieru.csv")
 
 ko_symbols <- df_deg$ko_symbol %>% unique()
-
 input_ko_symbol <- ko_symbols[1]
 
 ###########################################################
@@ -26,7 +25,7 @@ for (input_ko_symbol in ko_symbols) {
         pull(target_symbol) %>%
         unique()
     gene_list <- list(DEG = df_deg_symbol, DSG = df_spliced_symbol)
-    g <- ggVennDiagram(gene_list) + labs(title = input_ko_symbol) + scale_fill_gradient(low = "#EEE", high = "#FF604E")
+    g <- ggVennDiagram(gene_list) + labs(title = input_ko_symbol) + scale_fill_gradient(low = "#EEE", high = "#FF604E") + theme(text = element_text(size = 20))
     g_venn[[input_ko_symbol]] <- g
 }
 

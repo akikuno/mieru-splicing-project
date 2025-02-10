@@ -43,7 +43,7 @@ results_fisher <- results_fisher %>%
 # ggplot2で棒グラフとアスタリスクを描画
 g_barplot <- results_fisher %>%
     ggplot(aes(x = ko_symbol, y = odds_ratio)) +
-    geom_col(position = position_dodge(width = 0.9), color = "#333") + # 棒グラフ
+    geom_col(position = position_dodge(width = 0.9), color = "#333", fill = "#AAA") + # 棒グラフ
     geom_hline(yintercept = 1, linetype = "dashed", color = "#333") + # y=1に線を描画
     geom_text(
         aes(label = asterisk, y = odds_ratio + 0.05), # アスタリスクをodds_ratioの少し上に配置
@@ -53,7 +53,10 @@ g_barplot <- results_fisher %>%
     ) +
     theme_bw() +
     # X軸のラベルを45度回転
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    theme(
+        text = element_text(size = 28), # 全体のフォントサイズを大きく
+        axis.text.x = element_text(angle = 45, hjust = 1), # X軸のラベルを45度回転してフォントを大きく
+    ) +
     labs(x = "", y = "Enrichment (odds ratio)", fill = "SF-KO")
 
 
