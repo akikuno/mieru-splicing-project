@@ -2,13 +2,36 @@ library(tidyverse)
 library(patchwork)
 library(ggsignif)
 
-df_isoforms <- read_tsv("data/Fig7/tpm_isoforms_all.tsv.gz") %>%
-    mutate(genes = toupper(gene_symbol)) %>%
-    mutate(group = str_remove(sample, "_.*$")) %>%
-    # グループにおいて、IsoformのTPMの平均が1以上の遺伝子のみを抽出
-    group_by(group, genes) %>%
-    filter(mean(tpm) >= 1) %>%
+tmp_isoforms <- read_tsv("data/Fig7/tpm_isoforms_all.tsv.gz") %>%
+    mutate(group = str_remove(sample, "_.*$"))
+
+tmp_isoforms_counts <-
+    tmp_isoforms %>%
+    select(sample, group) %>%
+    distinct() %>%
+    group_by(group) %>%
+    add_count(group, name = "sample_number") %>%
+    ungroup() %>%
+    select(group, sample_number) %>%
+    inner_join(tmp_isoforms, by = "group", relationship = "many-to-many") %>%
+    distinct()
+
+tmp_isoforms_tpm <-
+    tmp_isoforms_counts %>%
+    # サンプルにおいて、IsoformのTPMの平均が10以上の遺伝子のみを抽出
+    group_by(sample, gene_symbol) %>%
+    filter(mean(tpm) >= 10) %>%
     ungroup()
+
+df_isoforms <-
+    # すべてのサンプルが条件をみたすもののみを抽出
+    tmp_isoforms_tpm %>%
+    group_by(group, gene_symbol) %>%
+    mutate(n = n_distinct(sample)) %>%
+    ungroup() %>%
+    filter(n == sample_number) %>%
+    select(-c(n, sample_number))
+
 
 df_homology <- read_tsv("data/Fig5/mgi_homology_symbols.txt")
 df_all <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv")
@@ -78,32 +101,40 @@ for (input_ko_symbol in ko_symbols) {
         filter(ko_symbol == input_ko_symbol) %>%
         select(genes)
     df_ko_isoforms <- df_isoforms %>%
+        mutate(genes = toupper(gene_symbol)) %>%
         filter(str_detect(sample, input_ko_symbol)) %>%
         inner_join(genes_complex, by = "genes", relationship = "many-to-many")
     df_mieru_isoforms <- df_isoforms %>%
+        mutate(genes = toupper(gene_symbol)) %>%
         filter(str_detect(sample, "MIERU")) %>%
         inner_join(genes_complex, by = "genes", relationship = "many-to-many")
 
-    df_entropy <- tibble()
-
     df_ko_entropy <- df_ko_isoforms %>%
-        # グループごとに、エントロピーを計算
-        group_by(group, genes) %>%
+        # サンプルごとに、エントロピーを計算
+        group_by(sample, gene_symbol) %>%
         mutate(entropy = calculate_entropy(tpm)) %>%
         ungroup() %>%
-        select(group, genes, entropy) %>%
+        # グループごとに、エントロピーの平均を計算
+        group_by(group, gene_symbol) %>%
+        mutate(entropy = mean(entropy)) %>%
+        ungroup() %>%
+        select(group, gene_symbol, entropy) %>%
         distinct()
 
     df_mieru_entropy <- df_mieru_isoforms %>%
-        # グループごとに、エントロピーを計算
-        group_by(group, genes) %>%
+        # サンプルごとに、エントロピーを計算
+        group_by(sample, gene_symbol) %>%
         mutate(entropy = calculate_entropy(tpm)) %>%
         ungroup() %>%
-        select(group, genes, entropy) %>%
+        # グループごとに、エントロピーの平均を計算
+        group_by(group, gene_symbol) %>%
+        mutate(entropy = mean(entropy)) %>%
+        ungroup() %>%
+        select(group, gene_symbol, entropy) %>%
         distinct()
 
 
-    df_entropy <- inner_join(df_ko_entropy, df_mieru_entropy, by = "genes", suffix = c("_ko", "_mieru"))
+    df_entropy <- inner_join(df_ko_entropy, df_mieru_entropy, by = "gene_symbol", suffix = c("_ko", "_mieru"))
     cat(input_ko_symbol)
     print(t.test(df_entropy$entropy_ko, df_entropy$entropy_mieru, paired = TRUE)$p.value)
 
