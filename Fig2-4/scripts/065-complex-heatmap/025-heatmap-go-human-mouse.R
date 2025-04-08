@@ -17,7 +17,7 @@ df_complextab <- read_csv("data/Fig5/complextab_human_mouse.csv")
 df_go_annotation <- read_csv("data/Fig6/go_annotation_human_mouse.csv")
 
 df_spliced_genes <- df_all %>%
-    filter(fdr < 0.05, abs(dpsi) > 0.01) %>%
+    filter(fdr < 0.05, abs(dpsi) > 0.1) %>%
     select(event, ko_symbol, target_symbol) %>%
     distinct()
 

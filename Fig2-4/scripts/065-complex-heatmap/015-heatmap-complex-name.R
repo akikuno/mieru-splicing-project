@@ -12,7 +12,7 @@ df_complextab <- read_tsv("data/Fig5/complextab_mouse.tsv")
 
 df_all <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv")
 df_spliced_genes <- df_all %>%
-    filter(fdr < 0.05, abs(dpsi) > 0.01) %>%
+    filter(fdr < 0.05, abs(dpsi) > 0.1) %>%
     select(event, ko_symbol, target_symbol) %>%
     distinct()
 
