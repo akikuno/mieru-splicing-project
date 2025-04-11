@@ -17,7 +17,7 @@ conda install -n mieru -y \
     fastp star samtools bedtools subread rmats rsem \
     numpy pandas matplotlib seaborn plotnine \
     r-base r-essentials r-extrafont r-janitor \
-    r-ggfortify r-ggrepel r-patchwork r-ggsignif \
+    r-ggfortify r-ggrepel r-patchwork r-ggsignif r-svglite \
     r-enrichr r-ggVennDiagram r-circlize \
     bioconductor-deseq2 \
     bioconductor-genomeinfodbdata \

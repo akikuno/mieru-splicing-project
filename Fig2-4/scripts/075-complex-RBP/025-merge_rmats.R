@@ -1,7 +1,7 @@
 library(tidyverse)
 
 df_rmats <- read_csv("data/rmats/all_events_ko_target_fdr_dpsi.csv")
-df_spliceosome_process <- read_csv("data/Fig7/spliceosome_process_mouse.csv")
+# df_spliceosome_process <- read_csv("data/Fig7/spliceosome_process_mouse.csv")
 df_spliceosome_family <- read_csv("data/Fig7/spliceosome_family_mouse.csv")
 
 # df_spliceosome_family_rmats <-
@@ -54,7 +54,8 @@ df_spliceosome_family_counts <-
     arrange(desc(n))
 
 
-df_spliceosome_family_counts %>%
+g_spliceosome <-
+    df_spliceosome_family_counts %>%
     select(target_symbol, spliceosome, n) %>%
     distinct() %>%
     ggplot(aes(x = n, y = spliceosome, color= spliceosome)) +
@@ -62,9 +63,40 @@ df_spliceosome_family_counts %>%
     theme_bw()
 
 
-df_spliceosome_family_counts %>%
+g_family <-
+    df_spliceosome_family_counts %>%
     select(target_symbol, family, n) %>%
     distinct() %>%
     ggplot(aes(x = n, y = family, color= family)) +
     geom_jitter(size=3, width = 0) +
     theme_bw()
+
+ggsave(
+    filename = "reports/Fig7/spliceosome_family_counts.jpg",
+    plot = g_family,
+    width = 10,
+    height = 10,
+    dpi = 300
+)
+ggsave(
+    filename = "reports/Fig7/spliceosome_complex_counts.jpg",
+    plot = g_spliceosome,
+    width = 10,
+    height = 10,
+    dpi = 300
+)
+
+ggsave(
+    filename = "reports/Fig7/spliceosome_family_counts.svg",
+    plot = g_family,
+    width = 10,
+    height = 10
+)
+ggsave(
+    filename = "reports/Fig7/spliceosome_complex_counts.svg",
+    plot = g_spliceosome,
+    width = 10,
+    height = 10
+)
+
+write_csv(df_spliceosome_family_counts, "reports/Fig7/spliceosome_counts.csv")

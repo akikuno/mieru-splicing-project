@@ -11,7 +11,7 @@ library(janitor)
 
 df_spliceosome_process <- read_excel("data/Fig7/spliceosome_gene_list.xlsx", sheet = 1) %>% clean_names()
 df_spliceosome_family <- read_excel("data/Fig7/spliceosome_gene_list.xlsx", sheet = 2) %>% clean_names()
-
+df_spliceosome_family <- read_csv("data/Fig7/spliceosome_gene_list.csv") %>% clean_names()
 
 df_spliceosome_process_longer <-
     df_spliceosome_process %>%
@@ -23,7 +23,6 @@ df_spliceosome_process_longer <-
 
 df_spliceosome_family_longer <-
     df_spliceosome_family %>%
-    select(-mouse) %>%
     pivot_longer(cols = -c(human, spliceosome), names_to = "family", values_to = "bool") %>%
     filter(!is.na(bool)) %>%
     select(-bool)
@@ -49,3 +48,12 @@ df_spliceosome_family_longer_mouse %>% count(family)
 
 write_csv(df_spliceosome_process_longer_mouse, "data/Fig7/spliceosome_process_mouse.csv")
 write_csv(df_spliceosome_family_longer_mouse, "data/Fig7/spliceosome_family_mouse.csv")
+
+
+df_spliceosome_family_longer_mouse <-
+    df_spliceosome_family_longer %>%
+    left_join(df_homology) %>%
+    select(human, mouse) %>%
+    distinct() %>%
+    arrange(mouse) %>%
+    write_csv("data/Fig7/spliceosome_human_mouse_converter.csv")

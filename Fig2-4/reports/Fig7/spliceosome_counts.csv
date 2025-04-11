@@ -1,0 +1,192 @@
+target_symbol,n,spliceosome,family
+U2af2,5,U1 snRNP,e_complex
+U2af2,5,U1 snRNP,a_complex
+U2af2,5,U1 snRNP,b_complex
+Bcas2,4,NTC,bact_complex
+Bcas2,4,NTC,c_and_c_complex
+Bcas2,4,NTC,p_and_ils_complex
+Slu7,4,C* complex specific,c_and_c_complex
+Slu7,4,C* complex specific,p_and_ils_complex
+Snrpa1,4,U2 snRNP,a_complex
+Snrpa1,4,U2 snRNP,pre_b_complex
+Snrpa1,4,U2 snRNP,b_complex
+Snrpa1,4,U2 snRNP,bact_complex
+Snrpa1,4,U2 snRNP,c_and_c_complex
+Snrpa1,4,U2 snRNP,p_and_ils_complex
+Xab2,4,NTC,bact_complex
+Xab2,4,NTC,c_and_c_complex
+Xab2,4,NTC,p_and_ils_complex
+Casc3,3,EJC,c_and_c_complex
+Casc3,3,EJC,p_and_ils_complex
+Ppig,3,Other PPIs,c_and_c_complex
+Sf1,2,U1 snRNP,e_complex
+Sf1,2,U1 snRNP,a_complex
+Snrnp70,2,U1 snRNP,e_complex
+Snrnp70,2,U1 snRNP,a_complex
+Snrpc,2,U1 snRNP,e_complex
+Snrpc,2,U1 snRNP,a_complex
+Wbp4,2,B complex specific,b_complex
+Aqr,1,NTR,bact_complex
+Aqr,1,NTR,c_and_c_complex
+Aqr,1,NTR,p_and_ils_complex
+Bud31,1,NTR,bact_complex
+Bud31,1,NTR,c_and_c_complex
+Bud31,1,NTR,p_and_ils_complex
+Cwc27,1,RES,bact_complex
+Ncbp1,1,CAP binding,b_complex
+Ppie,1,RES,bact_complex
+Ppie,1,RES,c_and_c_complex
+Ppie,1,RES,p_and_ils_complex
+Ppwd1,1,Other PPIs,c_and_c_complex
+Prkrip1,1,C* complex specific,c_and_c_complex
+Prkrip1,1,C* complex specific,p_and_ils_complex
+Prkrip1,1,C* complex specific,c_and_c_complex
+Prkrip1,1,C* complex specific,p_and_ils_complex
+Prpf3,1,Tri-snRNP,pre_b_complex
+Prpf3,1,Tri-snRNP,b_complex
+Prpf4,1,Tri-snRNP,pre_b_complex
+Prpf4,1,Tri-snRNP,b_complex
+Rbmx2,1,RES,bact_complex
+Srrm2,1,Splicing factor,bact_complex
+Srrm2,1,Splicing factor,c_and_c_complex
+Srrm2,1,Splicing factor,p_and_ils_complex
+U2af1,1,U1 snRNP,e_complex
+U2af1,1,U1 snRNP,a_complex
+U2af1,1,U1 snRNP,b_complex
+Snrpa,0,U1 snRNP,e_complex
+Snrpa,0,U1 snRNP,a_complex
+Snrpb,0,U1 Sm,e_complex
+Snrpb,0,U1 Sm,a_complex
+Snrpd1,0,U1 Sm,e_complex
+Snrpd1,0,U1 Sm,a_complex
+Snrpd2,0,U1 Sm,e_complex
+Snrpd2,0,U1 Sm,a_complex
+Snrpd3,0,U1 Sm,e_complex
+Snrpd3,0,U1 Sm,a_complex
+Snrpf,0,U1 Sm,e_complex
+Snrpf,0,U1 Sm,a_complex
+Snrpg,0,U1 Sm,e_complex
+Snrpg,0,U1 Sm,a_complex
+Snrpb2,0,U2 snRNP,a_complex
+Snrpb2,0,U2 snRNP,pre_b_complex
+Snrpb2,0,U2 snRNP,b_complex
+Snrpb2,0,U2 snRNP,bact_complex
+Snrpb2,0,U2 snRNP,c_and_c_complex
+Snrpb2,0,U2 snRNP,p_and_ils_complex
+Sf3a1,0,U2 snRNP,a_complex
+Sf3a1,0,U2 snRNP,pre_b_complex
+Sf3a1,0,U2 snRNP,b_complex
+Sf3a1,0,U2 snRNP,bact_complex
+Sf3a2,0,U2 snRNP,a_complex
+Sf3a2,0,U2 snRNP,pre_b_complex
+Sf3a2,0,U2 snRNP,b_complex
+Sf3a2,0,U2 snRNP,bact_complex
+Sf3a3,0,U2 snRNP,a_complex
+Sf3a3,0,U2 snRNP,pre_b_complex
+Sf3a3,0,U2 snRNP,b_complex
+Sf3a3,0,U2 snRNP,bact_complex
+Sf3b1,0,U2 snRNP,a_complex
+Sf3b1,0,U2 snRNP,pre_b_complex
+Sf3b1,0,U2 snRNP,b_complex
+Sf3b1,0,U2 snRNP,bact_complex
+Sf3b2,0,U2 snRNP,a_complex
+Sf3b2,0,U2 snRNP,pre_b_complex
+Sf3b2,0,U2 snRNP,b_complex
+Sf3b2,0,U2 snRNP,bact_complex
+Sf3b3,0,U2 snRNP,a_complex
+Sf3b3,0,U2 snRNP,pre_b_complex
+Sf3b3,0,U2 snRNP,b_complex
+Sf3b3,0,U2 snRNP,bact_complex
+Sf3b4,0,U2 snRNP,a_complex
+Sf3b4,0,U2 snRNP,pre_b_complex
+Sf3b4,0,U2 snRNP,b_complex
+Sf3b4,0,U2 snRNP,bact_complex
+Ddx46,0,U2 snRNP,a_complex
+Sf3b5,0,U2 snRNP,a_complex
+Sf3b5,0,U2 snRNP,b_complex
+Sf3b5,0,U2 snRNP,bact_complex
+Phf5a,0,U2 snRNP,a_complex
+Phf5a,0,U2 snRNP,b_complex
+Phf5a,0,U2 snRNP,bact_complex
+Htatsf1,0,U2 snRNP,a_complex
+Sf3b6,0,U2 snRNP,b_complex
+Sf3b6,0,U2 snRNP,bact_complex
+Prpf8,0,U5 snRNP,pre_b_complex
+Prpf8,0,U5 snRNP,b_complex
+Prpf8,0,U5 snRNP,bact_complex
+Prpf8,0,U5 snRNP,c_and_c_complex
+Prpf8,0,U5 snRNP,p_and_ils_complex
+Snrnp200,0,U5 snRNP,pre_b_complex
+Snrnp200,0,U5 snRNP,b_complex
+Snrnp200,0,U5 snRNP,bact_complex
+Snrnp200,0,U5 snRNP,c_and_c_complex
+Snrnp200,0,U5 snRNP,p_and_ils_complex
+Eftud2,0,U5 snRNP,pre_b_complex
+Eftud2,0,U5 snRNP,b_complex
+Eftud2,0,U5 snRNP,bact_complex
+Eftud2,0,U5 snRNP,c_and_c_complex
+Eftud2,0,U5 snRNP,p_and_ils_complex
+Prpf6,0,U5 snRNP,pre_b_complex
+Prpf6,0,U5 snRNP,b_complex
+Snrnp40,0,U5 snRNP,pre_b_complex
+Snrnp40,0,U5 snRNP,b_complex
+Snrnp40,0,U5 snRNP,bact_complex
+Snrnp40,0,U5 snRNP,c_and_c_complex
+Snrnp40,0,U5 snRNP,p_and_ils_complex
+Txnl4a,0,U5 snRNP,pre_b_complex
+Txnl4a,0,U5 snRNP,b_complex
+Ddx23,0,Tri-snRNP,pre_b_complex
+Usp39,0,Tri-snRNP,pre_b_complex
+Snu13,0,Tri-snRNP,pre_b_complex
+Snu13,0,Tri-snRNP,b_complex
+Prpf31,0,Tri-snRNP,pre_b_complex
+Prpf31,0,Tri-snRNP,b_complex
+Sart1,0,Tri-snRNP,b_complex
+Ik,0,B complex specific,b_complex
+Smu1,0,B complex specific,b_complex
+Prpf38a,0,B complex specific,b_complex
+Zmat2,0,B complex specific,b_complex
+Pqbp1,0,B complex specific,b_complex
+Wbp11,0,B complex specific,b_complex
+Snw1,0,NTR,b_complex
+Snw1,0,NTR,bact_complex
+Snw1,0,NTR,c_and_c_complex
+Snw1,0,NTR,p_and_ils_complex
+Rbm22,0,NTR,b_complex
+Rbm22,0,NTR,bact_complex
+Rbm22,0,NTR,c_and_c_complex
+Rbm22,0,NTR,p_and_ils_complex
+Ppil1,0,NTR,bact_complex
+Ppil1,0,NTR,c_and_c_complex
+Ppil1,0,NTR,p_and_ils_complex
+Cwc15,0,NTR,bact_complex
+Cwc15,0,NTR,c_and_c_complex
+Cwc15,0,NTR,p_and_ils_complex
+Plrg1,0,NTR,bact_complex
+Plrg1,0,NTR,c_and_c_complex
+Plrg1,0,NTR,p_and_ils_complex
+Prpf19,0,NTC,bact_complex
+Prpf19,0,NTC,c_and_c_complex
+Prpf19,0,NTC,p_and_ils_complex
+Crnkl1,0,NTC,bact_complex
+Crnkl1,0,NTC,c_and_c_complex
+Crnkl1,0,NTC,p_and_ils_complex
+Dhx16,0,Splicing factor,bact_complex
+Cdc40,0,Splicing factor,bact_complex
+Cdc40,0,Splicing factor,c_and_c_complex
+Cdc40,0,Splicing factor,p_and_ils_complex
+Cwf19l2,0,Splicing factor,p_and_ils_complex
+Snip1,0,RES,bact_complex
+Bud13,0,RES,bact_complex
+Yju2,0,C complex specific,c_and_c_complex
+Cwc25,0,C complex specific,c_and_c_complex
+Dhx38,0,C complex specific,c_and_c_complex
+Magoh,0,EJC,c_and_c_complex
+Magoh,0,EJC,p_and_ils_complex
+Dhx8,0,C* complex specific,c_and_c_complex
+Dhx8,0,C* complex specific,p_and_ils_complex
+Dhx15,0,ILS specific,p_and_ils_complex
+Cdc40,0,C* complex specific,c_and_c_complex
+Dhx8,0,C* complex specific,c_and_c_complex
+Dhx8,0,P specific,p_and_ils_complex
+Dhx15,0,ILS specific,p_and_ils_complex
