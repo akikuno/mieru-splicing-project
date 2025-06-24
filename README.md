@@ -28,21 +28,22 @@ conda config --add channels defaults
 conda config --add channels bioconda
 conda config --add channels conda-forge
 
-conda create -n mieru -y
-conda install -n mieru -y \
-    fastp star samtools bedtools subread rmats rsem \
-    numpy pandas matplotlib seaborn plotnine \
-    r-base r-essentials r-extrafont r-janitor \
-    r-ggfortify r-ggrepel r-patchwork r-ggsignif r-svglite \
-    r-enrichr r-ggVennDiagram r-circlize \
-    bioconductor-deseq2 \
-    bioconductor-genomeinfodbdata \
-    bioconductor-org.hs.eg.db \
-    bioconductor-org.Mm.eg.db \
-    bioconductor-clusterprofiler
+conda env create -f environment.yml
+conda activate mieru
 
 conda activate mieru
 ```
+
+
+> [!IMPORTANT]
+> To ensure full reproducibility of this project's analysis results, the following files are provided:
+> - **`environment.yml`**: Complete conda environment (including build numbers)
+> - **`environment-no-builds.yml`**: Cross-platform compatible version
+> - **`conda-packages-list.txt`**: Detailed list of installed packages
+> - **`R-session-info.txt`**: R session information
+> - **`REPRODUCIBILITY.md`**: Step-by-step instructions for reproducibility  
+> For details, see [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md).
+
 
 ## Dataset Access
 
@@ -74,9 +75,3 @@ The analysis pipeline consists of:
 3. Run preprocessing scripts in numerical order within each analysis directory
 4. Scripts must be executed from their respective directories due to relative paths
 
-## Key Tools Used
-
-- **Alignment**: STAR, RSEM
-- **Splicing**: rMATS  
-- **Statistics**: DESeq2, R packages
-- **Visualization**: ggplot2, circlize
