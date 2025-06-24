@@ -1,3 +1,7 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DOI](https://zenodo.org/badge/862646954.svg)](https://doi.org/10.5281/zenodo.13922578)
+
+
 # Mieru Splicing Project
 
 This repository contains comprehensive RNA splicing analysis scripts and data for studying the effects of RNA-binding protein (RBP) knockouts on alternative splicing patterns in mouse embryonic stem cells. The project analyzes differential splicing events across 11 different RBP knockout lines compared to MIERU control cells.
