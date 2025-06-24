@@ -3,7 +3,6 @@
 library(tidyverse)
 library(janitor)
 
-dir.create("data/Fig5", showWarnings = FALSE)
 dir.create("reports/Fig5", showWarnings = FALSE)
 
 if (!file.exists("data/Fig5/10090.tsv")) {

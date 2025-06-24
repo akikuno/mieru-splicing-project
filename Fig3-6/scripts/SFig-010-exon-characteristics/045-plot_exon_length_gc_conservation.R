@@ -47,5 +47,5 @@ p_cons <- ggplot(df_cons_mean, aes(x=ko_symbol, y=mean_phylop)) +
 
 p <- p_length / p_gc / p_cons + plot_annotation(title = "All SE events", tag_levels = 'A')
 
-ggsave("reports/Fig2/027-violin_exon_length_gc_conservation.jpg", p, width=10, height=10)
-ggsave("reports/Fig2/027-violin_exon_length_gc_conservation.pdf", p, width=10, height=10)
+ggsave("reports/SFig/027-violin_exon_length_gc_conservation.jpg", p, width=10, height=10)
+ggsave("reports/SFig/027-violin_exon_length_gc_conservation.pdf", p, width=10, height=10)

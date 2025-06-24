@@ -41,5 +41,5 @@ for (symbol in ko_symbols) {
     }
 }
 
-dir.create("reports/Fig4/", showWarnings = FALSE)
-write_csv(enrichr_pathways, "reports/Fig4/enrichr.csv")
+dir.create("reports/Fig5/", showWarnings = FALSE)
+write_csv(enrichr_pathways, "reports/Fig5/enrichr.csv")

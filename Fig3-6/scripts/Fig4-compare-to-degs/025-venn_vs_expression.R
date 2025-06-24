@@ -38,9 +38,9 @@ g_venn <- wrap_plots(g_venn, nrow = 3)
 width <- 18
 height <- 18
 
-dir.create("reports/Fig3/", showWarnings = FALSE)
-ggsave("reports/Fig3/025-venn_overlap_dsg_deg.pdf", g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
-ggsave("reports/Fig3/025-venn_overlap_dsg_deg.jpg", g_venn, width = width, height = height)
+dir.create("reports/Fig4/", showWarnings = FALSE)
+ggsave("reports/Fig4/025-venn_overlap_dsg_deg.pdf", g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
+ggsave("reports/Fig4/025-venn_overlap_dsg_deg.jpg", g_venn, width = width, height = height)
 
 ###########################################################
 # Extract intersect
@@ -58,4 +58,4 @@ genes_intersect <-
         tibble(ko_symbol = input_ko_symbol, se_deg_overlapped = gene_intersect)
     })
 
-write_csv(genes_intersect, "reports/Fig3/025-overlap_dsg_deg.csv")
+write_csv(genes_intersect, "reports/Fig4/025-overlap_dsg_deg.csv")

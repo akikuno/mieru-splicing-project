@@ -2,7 +2,7 @@ library(tidyverse)
 library(circlize)
 library(patchwork)
 
-df_enrichr <- read_csv("reports/Fig4/enrichr.csv")
+df_enrichr <- read_csv("reports/Fig5/enrichr.csv")
 
 data <- df_enrichr %>%
     select(Term, from = ko_symbol) %>%
@@ -25,7 +25,7 @@ unique(df_chord$to)
 nrows <- length(unique(df_chord$from))
 ncols <- length(unique(df_chord$to))
 
-jpeg(file = "reports/Fig4/023-circos.jpg", width = 1500, height = 1500, units = "px", res = 300)
+jpeg(file = "reports/Fig5/023-circos.jpg", width = 1500, height = 1500, units = "px", res = 300)
 par(cex = 0.4, family = "Arial")
 circos.par(gap.after = c(rep(3, nrows - 1), 10, rep(3, ncols - 1), 10))
 chordDiagram(df_chord,
@@ -37,7 +37,7 @@ chordDiagram(df_chord,
 circos.clear()
 dev.off()
 
-pdf(file = "reports/Fig4/023-circos.pdf")
+pdf(file = "reports/Fig5/023-circos.pdf")
 circos.clear()
 par(cex = 0.5)
 circos.par(gap.after = c(rep(3, nrows - 1), 10, rep(3, ncols - 1), 10))
