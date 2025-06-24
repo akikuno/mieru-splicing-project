@@ -1,0 +1,150 @@
+# Configuration parameters for Fig3-6 analysis pipeline
+
+# Statistical significance thresholds
+thresholds:
+  fdr: 0.05                    # False discovery rate threshold
+  dpsi: 0.1                    # Absolute delta PSI threshold (10% change)
+  padj: 0.05                   # Adjusted p-value threshold for DEG analysis
+  log2fc: 1.0                  # Log2 fold change threshold for DEGs
+
+# Plotting configuration
+plotting:
+  # Standard color palette for splicing events
+  event_colors:
+    A3SS: "#44ED8B"
+    A5SS: "#FF2FC1" 
+    MXE: "#3FAFFF"
+    RI: "#FFE270"
+    SE: "#FF604E"
+  
+  # Default plot dimensions
+  dimensions:
+    standard:
+      width: 8
+      height: 6
+    violin:
+      width: 10
+      height: 8
+    wide_violin:
+      width: 24
+      height: 6
+    heatmap:
+      width: 12
+      height: 10
+    venn:
+      width: 8
+      height: 8
+    circos:
+      width: 10
+      height: 10
+  
+  # Font settings
+  font:
+    family: "Arial"
+    base_size: 14
+    title_size: 20
+    axis_title_size: 18
+    axis_text_size: 14
+  
+  # Output formats
+  formats: ["pdf", "jpg"]
+
+# File paths
+paths:
+  # Data directories
+  data:
+    root: "data"
+    rmats: "data/rmats"
+    degs: "data/degs"
+    genome: "data/genome"
+    exon_characteristics: "data/exon_characteristics"
+    complexes: "data/Fig5"
+    go_annotation: "data/Fig6"
+    spliceosome: "data/Fig7"
+  
+  # Output directories  
+  reports:
+    root: "reports"
+    fig3: "reports/Fig3"
+    fig4: "reports/Fig4" 
+    fig5: "reports/Fig5"
+    fig6: "reports/Fig6"
+    fig7: "reports/Fig7"
+    sfig: "reports/SFig"
+  
+  # Script directories
+  scripts:
+    root: "scripts"
+    utils: "scripts/utils"
+    config: "scripts/config"
+
+# Analysis parameters
+analysis:
+  # RBP knockout genes to analyze
+  ko_genes: 
+    - "Cd2bp2"
+    - "Qk" 
+    - "Rbm24"
+    - "Rpl22l1"
+    - "Spen"
+    - "Strap"
+    - "Tra2b"
+    - "Trim71"
+    - "Ubr5"
+    - "Wt1"
+    - "Ybx1"
+  
+  # Control sample pattern
+  control_pattern: "MIERU_CH"
+  
+  # Event types for analysis
+  event_types:
+    - "A3SS"
+    - "A5SS" 
+    - "MXE"
+    - "RI"
+    - "SE"
+  
+  # Genome assembly
+  genome:
+    assembly: "mm39"
+    species: "Mus_musculus"
+    ensembl_release: 111
+
+# External database URLs
+databases:
+  ensembl:
+    base_url: "https://ftp.ensembl.org/pub/release-111"
+    fasta_url: "https://ftp.ensembl.org/pub/release-111/fasta/mus_musculus/dna/Mus_musculus.GRCm39.dna.primary_assembly.fa.gz"
+    gtf_url: "https://ftp.ensembl.org/pub/release-111/gtf/mus_musculus/Mus_musculus.GRCm39.111.gtf.gz"
+  
+  uniprot:
+    idmapping_url: "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/idmapping.dat.gz"
+  
+  mgi:
+    homology_url: "http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt"
+    
+  phylop:
+    conservation_url: "http://hgdownload.cse.ucsc.edu/goldenpath/mm39/phyloP35way/"
+
+# Software versions (for reproducibility)
+software:
+  r_version: "4.3.0"
+  bioconductor_version: "3.17"
+  required_packages:
+    - "tidyverse"
+    - "DESeq2"
+    - "ggplot2"
+    - "extrafont"
+    - "patchwork"
+    - "circlize"
+    - "ggVennDiagram"
+    - "pheatmap"
+    - "ggsignif"
+    - "RColorBrewer"
+    - "enrichR"
+    - "org.Mm.eg.db"
+    - "clusterProfiler"
+    - "readxl"
+    - "janitor"
+    - "yaml"

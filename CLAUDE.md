@@ -22,7 +22,8 @@ conda install -n mieru -y \
     numpy pandas matplotlib seaborn plotnine \
     r-base r-essentials r-extrafont r-janitor \
     r-ggfortify r-ggrepel r-patchwork r-ggsignif r-svglite \
-    r-enrichr r-ggVennDiagram r-circlize \
+    r-enrichr r-ggVennDiagram r-circlize r-pheatmap r-readxl \
+    r-yaml r-rcolorbrewer \
     bioconductor-deseq2 \
     bioconductor-genomeinfodbdata \
     bioconductor-org.hs.eg.db \
@@ -38,39 +39,61 @@ The analysis is organized into two main sections:
 - **Fig2/**: Initial characterization studies with MIERU cell lines and marker gene analysis
 - **Fig3-6/**: Main comparative analysis of RBP knockouts vs controls
 
-### Script Organization
+### Script Organization (Refactored Structure)
 
-**Fig3-6 scripts are organized by figure and functionality**:
-- `015-preprocess/`: Initial data preprocessing pipeline
-- `Fig3-event-frequency/`: Alternative splicing event analysis
-- `Fig4-compare-to-degs/`: Integration with differential expression
-- `Fig5-enrichr/`: Functional enrichment analysis  
-- `Fig6-010-complex-human-mouse/`: Cross-species protein complex analysis
-- `Fig6-020-complex-heatmap/`: Complex visualization
-- `Fig6-030-complex-RBP/`: RBP-specific complex analysis
-- `SFig-010-exon-characteristics/`: Supplementary exon feature analysis
+**Fig3-6 scripts follow a standardized, modular organization**:
+- `00-setup/`: System setup, dependency checks, and genome data download
+- `01-preprocessing/`: Core data preprocessing pipeline (trimming, mapping, counting, splicing)
+- `02-quality-control/`: Quality metrics and exon characteristics analysis
+- `03-event-analysis/`: Alternative splicing event analysis (Figure 3)
+- `04-deg-comparison/`: Integration with differential expression (Figure 4)
+- `05-complex-analysis/`: Protein complex enrichment analysis (Figure 5)
+- `06-heatmap-analysis/`: GO term and pathway visualization (Figure 6)
+- `utils/`: Shared utility functions (data loading, plotting, statistics)
+- `config/`: Configuration files and parameters
 
-**Numbering within each directory**:
-- `015-`: Initial setup/preprocessing
-- `025-`: Primary analysis
-- `035-`: Secondary analysis
-- `045-`: Visualization/output generation
+**Utility Modules**:
+- `utils/data-loaders.R`: Standardized data loading with consistent filtering
+- `utils/plot-themes.R`: Reusable ggplot2 themes and color schemes
+- `utils/statistical-tests.R`: Common statistical analysis functions
+- `utils/config-loader.R`: Configuration management
+
+**Legacy Structure** (preserved for reference):
+- `015-preprocess/`, `Fig3-event-frequency/`, etc.: Original organization
+- `_past/`: Archived experimental approaches
 
 ### Standard Bioinformatics Pipeline
 
-**Phase 1: Preprocessing** (`015-preprocess/`)
-1. `015-download_genomes.sh` - Downloads mm39 genome and GTF from Ensembl release-111
-2. `027-fastq_trimming.sh` - Quality control with fastp
-3. `035-fastq_mapping.sh` - STAR alignment to genome
-4. `037-featurecounts.sh` - Gene-level read counting
-5. `045-rmats.sh` - Alternative splicing detection with rMATS
+**Refactored Pipeline Structure**:
 
-**Phase 2: Analysis** (figure-specific subdirectories)
-- **Fig3**: Event frequency and magnitude analysis (`Fig3-event-frequency/`)
-- **Fig4**: Differential expression integration with DESeq2 (`Fig4-compare-to-degs/`)
-- **Fig5**: Functional enrichment analysis (`Fig5-enrichr/`)
-- **Fig6**: Protein complex analysis using CORUM/ComplexTab databases (`Fig6-*/`)
-- **SFig**: Exon characteristics (length, GC content, conservation) (`SFig-010-exon-characteristics/`)
+**Phase 0: Setup** (`00-setup/`)
+- `01-check-dependencies.sh` - Verify system dependencies and R packages
+- `02-create-directories.sh` - Create required directory structure
+- `03-download-genomes.sh` - Download mm39 genome and GTF from Ensembl release-111
+
+**Phase 1: Preprocessing** (`01-preprocessing/`)
+- `01-fastq-trimming.sh` - Quality control with fastp
+- `02-read-mapping.sh` - STAR alignment to genome
+- `03-feature-counts.sh` - Gene-level read counting
+- `04-differential-splicing.sh` - Alternative splicing detection with rMATS
+
+**Phase 2: Quality Control** (`02-quality-control/`)
+- Exon characteristics analysis (length, GC content, conservation)
+
+**Phase 3: Event Analysis** (`03-event-analysis/`)
+- **Figure 3**: Event frequency and ΔPSI distribution analysis
+- `01-event-frequency.R` - Barplot of event type percentages
+- `02-dpsi-distribution.R` - Violin plots of ΔPSI distributions
+
+**Phase 4: DEG Comparison** (`04-deg-comparison/`)
+- **Figure 4**: Integration with differential gene expression
+- Overlap analysis between splicing and expression changes
+
+**Phase 5: Complex Analysis** (`05-complex-analysis/`)
+- **Figure 5**: Protein complex enrichment using CORUM/ComplexTab databases
+
+**Phase 6: Heatmap Analysis** (`06-heatmap-analysis/`)
+- **Figure 6**: GO term and pathway heatmaps
 
 ## Data Organization
 
@@ -121,40 +144,55 @@ cd Fig2/scripts/025-fluorescents/
 Rscript 045-barplot.R
 ```
 
-**Fig3-6 Analysis Commands**:
+**Refactored Analysis Commands**:
+
+**Complete Pipeline** (Recommended):
 ```bash
-# Preprocessing pipeline
+cd Fig3-6/scripts/
+conda activate mieru
+./run-analysis.sh
+```
+
+**Individual Phases**:
+```bash
+cd Fig3-6/scripts/
+
+# Phase 0: Setup
+./00-setup/01-check-dependencies.sh
+./00-setup/02-create-directories.sh
+./00-setup/03-download-genomes.sh
+
+# Phase 1: Preprocessing
+./01-preprocessing/01-fastq-trimming.sh
+./01-preprocessing/02-read-mapping.sh
+./01-preprocessing/03-feature-counts.sh
+./01-preprocessing/04-differential-splicing.sh
+
+# Phase 2: Quality Control
+./02-quality-control/015-preprocess.sh
+Rscript 02-quality-control/045-plot_exon_length_gc_conservation.R
+
+# Phase 3: Event Analysis (Figure 3)
+Rscript 03-event-analysis/01-event-frequency.R
+Rscript 03-event-analysis/02-dpsi-distribution.R
+
+# Phase 4: DEG Comparison (Figure 4)
+Rscript 04-deg-comparison/015-deseq2.R
+Rscript 04-deg-comparison/025-venn_vs_expression.R
+
+# Phase 5: Complex Analysis (Figure 5)
+Rscript 05-complex-analysis/025-fisher_complexity_complextab_human_mouse.R
+
+# Phase 6: Heatmap Analysis (Figure 6)
+Rscript 06-heatmap-analysis/025-heatmap-go-human-mouse.R
+```
+
+**Legacy Commands** (still functional):
+```bash
+# Original structure (preserved for compatibility)
 cd Fig3-6/scripts/015-preprocess/
 ./015-download_genomes.sh
-./027-fastq_trimming.sh
-./035-fastq_mapping.sh
-./037-featurecounts.sh
-./045-rmats.sh
-
-# Fig3: Event frequency analysis
-cd Fig3-6/scripts/Fig3-event-frequency/
-./015-preprocess.sh
-Rscript 025-barplot_frequency_per_event.R
-Rscript 035-violinplot_dpsi_per_event.R
-
-# Fig4: Differential expression analysis
-cd Fig3-6/scripts/Fig4-compare-to-degs/
-Rscript 015-deseq2.R
-Rscript 025-venn_vs_expression.R
-
-# Fig5: Enrichment analysis
-cd Fig3-6/scripts/Fig5-enrichr/
-Rscript 013-enrichr.R
-Rscript 015-se_enrichr.R
-
-# Fig6: Complex analysis
-cd Fig3-6/scripts/Fig6-010-complex-human-mouse/
-Rscript 025-fisher_complexity_complextab_human_mouse.R
-
-# SFig: Exon characteristics
-cd Fig3-6/scripts/SFig-010-exon-characteristics/
-./015-preprocess.sh
-Rscript 045-plot_exon_length_gc_conservation.R
+# ... etc
 ```
 
 ## Important Architecture Notes
@@ -183,10 +221,12 @@ Rscript 045-plot_exon_length_gc_conservation.R
 
 When working with this codebase:
 - Always activate the `mieru` conda environment before running scripts
-- Scripts must be run from their respective directories due to relative path dependencies
-- Fig2 focuses on control characterization and marker genes; Fig3-6 contains the main RBP knockout analysis
-- Fig3-6 scripts are organized by figure number corresponding to publication figures
-- Output goes to `reports/Fig{N}/` directories matching the script directory names
+- **Use refactored structure**: New modular organization in `00-setup/`, `01-preprocessing/`, etc.
+- **Run complete pipeline**: Use `./run-analysis.sh` for full analysis workflow
+- **Configuration-driven**: Modify parameters in `config/parameters.yaml` instead of hard-coding
+- **Shared utilities**: Use functions from `utils/` for consistent data loading and plotting
+- Fig2 focuses on control characterization; Fig3-6 contains main RBP knockout analysis
+- Legacy structure preserved for backward compatibility in original directory names
+- Output goes to `reports/Fig{N}/` directories matching publication figures
 - Large data files (BAM, FASTQ) are stored locally but not in git - use GEO accessions for data access
-- R scripts expect specific data file structures - check data preprocessing steps if encountering missing file errors
-- All splicing significance testing uses the same thresholds across all analyses for consistency
+- All splicing significance testing uses consistent thresholds: FDR < 0.05, |ΔPSI| > 0.1
