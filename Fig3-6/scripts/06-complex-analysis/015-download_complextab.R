@@ -6,8 +6,8 @@ library(janitor)
 dir.create("reports/Fig5", showWarnings = FALSE)
 
 if (!file.exists("data/Fig5/10090.tsv")) {
-    df_hs <- read_tsv("https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/9606.tsv") %>% clean_names()
-    df_mm <- read_tsv("https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/10090.tsv") %>% clean_names()
+    df_hs <- read_tsv("https://ftp.ebi.ac.uk/pub/databases/intact/complex/2024-09-08/complextab/9606.tsv") %>% clean_names()
+    df_mm <- read_tsv("https://ftp.ebi.ac.uk/pub/databases/intact/complex/2024-09-08/complextab/10090.tsv") %>% clean_names()
     write_tsv(df_hs, "data/Fig5/9606.tsv")
     write_tsv(df_mm, "data/Fig5/10090.tsv")
 }
