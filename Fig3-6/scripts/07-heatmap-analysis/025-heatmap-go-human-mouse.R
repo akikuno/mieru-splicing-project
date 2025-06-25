@@ -86,31 +86,3 @@ dev.off()
 jpeg("reports/Fig6/heatmap_go_human_mouse.jpg", width = 15, height = 10, units = "in", res = 600)
 pheatmap(mat_overlap, scale = "none", color = colorRampPalette(c("white", "#fd7e00"))(10), fontsize = 20)
 dev.off()
-
-# go_overlap <- go_overlap %>% filter(description == "regulation of cell cycle")
-# # gene_idの要素が90%以上マッチしているものは、同一のGOとして、qvalueがもっとも低いものを選択する
-
-
-# # gene_id をリストに変換
-# go_overlap <- go_overlap %>%
-#     mutate(gene_list = strsplit(gene_id, "/"))
-
-# # 類似度判定関数（90%以上の遺伝子が一致するか）
-# similarity_check <- function(x, y) {
-#     common_genes <- length(intersect(x, y))
-#     min_length <- min(length(x), length(y))
-#     return(common_genes / min_length)
-# }
-
-# # 全ペアの組み合わせを取得
-# pairs <- expand.grid(idx1 = 1:nrow(go_overlap), idx2 = 1:nrow(go_overlap)) %>%
-#     filter(idx1 < idx2)
-
-# # 類似するペアをフィルタリング
-# edges <-
-#     pairs %>%
-#     mutate(similar = pmap_dbl(list(idx1, idx2), function(i, j) {
-#         similarity_check(go_overlap$gene_list[[i]], go_overlap$gene_list[[j]])
-#     })) %>%
-#     filter(similar > 0.75) %>%
-#     select(idx1, idx2)
