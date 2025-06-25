@@ -28,13 +28,7 @@ The analysis investigates how specific RBP knockouts affect:
 Create and activate the conda environment with all required bioinformatics tools:
 
 ```bash
-conda config --add channels defaults
-conda config --add channels bioconda
-conda config --add channels conda-forge
-
 conda env create -f environment.yml
-conda activate mieru
-
 conda activate mieru
 ```
 
