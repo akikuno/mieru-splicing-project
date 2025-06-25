@@ -66,6 +66,5 @@ g_barplot <-
 # Save the plot
 ###########################################################
 
-dir.create("reports/Fig3/", showWarnings = FALSE)
 ggsave("reports/Fig3/015-barplot.pdf", g_barplot, width = 8, height = 6, family = "Arial", device = cairo_pdf)
 ggsave("reports/Fig3/015-barplot.jpg", g_barplot, width = 8, height = 6)

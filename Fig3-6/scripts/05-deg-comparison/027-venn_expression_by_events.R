@@ -19,6 +19,7 @@ input_event <- events[1]
 
 width <- 20
 height <- 18
+dir.create("reports/Fig4/venn-expression-by-events", showWarnings = FALSE)
 
 for (input_event in events) {
     venn_list <-
@@ -34,25 +35,25 @@ for (input_event in events) {
     g_venn <- wrap_plots(venn_list, nrow = 3)
 
     # Save the plot
-    ggsave(str_glue("reports/figure/037-venn-{input_event}.pdf"), g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
-    ggsave(str_glue("reports/figure/037-venn-{input_event}.jpg"), g_venn, width = width, height = height)
+    ggsave(str_glue("reports/Fig4/venn-expression-by-events/venn-expression-{input_event}.pdf"), g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
+    ggsave(str_glue("reports/Fig4/venn-expression-by-events/venn-expression-{input_event}.jpg"), g_venn, width = width, height = height)
 }
 
-###########################################################
-# Extract intersect
-###########################################################
+# ###########################################################
+# # Extract intersect
+# ###########################################################
 
-genes_intersect <- tibble()
+# genes_intersect <- tibble()
 
-for (input_event in events) {
-    for (input_ko_symbol in ko_symbols) {
-        df_deg_ko_symbol <- df_deg %>% filter(ko_symbol == input_ko_symbol) %>% select(target_symbol)
-        df_se_ko_symbol <- df %>% filter(ko_symbol == input_ko_symbol, event == input_event) %>% select(target_symbol)
-        gene_intersect <- intersect(df_deg_ko_symbol$target_symbol, df_se_ko_symbol$target_symbol)
-        results <- tibble(ko_symbol = input_ko_symbol, event = input_event, se_deg_overlapped = gene_intersect)
-        genes_intersect <- bind_rows(genes_intersect, results)
-    }
-}
+# for (input_event in events) {
+#     for (input_ko_symbol in ko_symbols) {
+#         df_deg_ko_symbol <- df_deg %>% filter(ko_symbol == input_ko_symbol) %>% select(target_symbol)
+#         df_se_ko_symbol <- df %>% filter(ko_symbol == input_ko_symbol, event == input_event) %>% select(target_symbol)
+#         gene_intersect <- intersect(df_deg_ko_symbol$target_symbol, df_se_ko_symbol$target_symbol)
+#         results <- tibble(ko_symbol = input_ko_symbol, event = input_event, se_deg_overlapped = gene_intersect)
+#         genes_intersect <- bind_rows(genes_intersect, results)
+#     }
+# }
 
-write_csv(genes_intersect, "reports/Fig3/all_events_deg_overlapped.csv")
+# write_csv(genes_intersect, "reports/Fig4/all_events_deg_overlapped.csv")
 

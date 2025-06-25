@@ -29,28 +29,16 @@ if (websiteLive) {
 
 dbs <- listEnrichrDbs() %>% as_tibble()
 dbs_library <- pull(dbs, libraryName)
-# dbs_library[str_detect(dbs_library, "Reactome")]
-# dbs_library[str_detect(dbs_library, "KEGG")]
-# dbs_library[str_detect(dbs_library, "BioPlanet")]
-# dbs_library[str_detect(dbs_library, "WikiPathway")]
 dbs_library[str_detect(dbs_library, "^GO_")]
 
-# dbs <- c("WikiPathways_2023_Human", "Reactome_2022", "KEGG_2021_Human", "BioPlanet_2019", "GO_Molecular_Function_2023", "GO_Biological_Process_2023", "GO_Cellular_Component_2023")
-
-# dbs <- c("WikiPathways_2024_Mouse",
-#     "KEGG_2019_Mouse",
-#     "Reactome_Pathways_2024",
-#     "BioPlanet_2019",
-#     "GO_Molecular_Function_2023", "GO_Biological_Process_2023", "GO_Cellular_Component_2023")
-
-dbs <- c("GO_Molecular_Function_2023", "GO_Biological_Process_2023", "GO_Cellular_Component_2023")
+dbs <- c("GO_Molecular_Function_2023", "GO_Biological_Process_2023")
 
 ###########################################################
 # Extract intersect
 ###########################################################
 
 enrichr_pathways <- tibble()
-if (!file.exists("reports/Fig3/045-go_se_deg.csv")) {
+if (!file.exists("reports/Fig4/045-go_se_deg.csv")) {
     for (input_ko_symbol in ko_symbols) {
         deg <- df_deg %>%
             filter(ko_symbol == input_ko_symbol) %>%
@@ -86,14 +74,15 @@ if (!file.exists("reports/Fig3/045-go_se_deg.csv")) {
             }
         }
     }
-    write_csv(enrichr_pathways, "reports/Fig3/045-go_se_deg.csv")
+    write_csv(enrichr_pathways, "reports/Fig4/045-go_se_deg.csv")
 }
 
-enrichr_pathways <- read_csv("reports/Fig3/045-go_se_deg.csv")
+enrichr_pathways <- read_csv("reports/Fig4/045-go_se_deg.csv")
 
 ###########################################################
 # Plot Venn Diagram
 ###########################################################
+
 
 venn_list <-
     map(ko_symbols, function(input_ko_symbol) {
@@ -117,6 +106,6 @@ g_venn <- wrap_plots(venn_list, nrow = 3)
 
 width <- 18
 height <- 18
-dir.create("reports/Fig3/", showWarnings = FALSE)
-ggsave("reports/Fig3/045-venn_go_dsg_deg.pdf", g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
-ggsave("reports/Fig3/045-venn_go_dsg_deg.jpg", g_venn, width = width, height = height)
+
+ggsave("reports/Fig4/045-venn_go.pdf", g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
+ggsave("reports/Fig4/045-venn_go.jpg", g_venn, width = width, height = height)

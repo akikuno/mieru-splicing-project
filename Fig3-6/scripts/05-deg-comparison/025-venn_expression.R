@@ -39,8 +39,8 @@ width <- 18
 height <- 18
 
 dir.create("reports/Fig4/", showWarnings = FALSE)
-ggsave("reports/Fig4/025-venn_overlap_dsg_deg.pdf", g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
-ggsave("reports/Fig4/025-venn_overlap_dsg_deg.jpg", g_venn, width = width, height = height)
+ggsave("reports/Fig4/025-venn-expression.pdf", g_venn, width = width, height = height, family = "Arial", device = cairo_pdf)
+ggsave("reports/Fig4/025-venn-expression.jpg", g_venn, width = width, height = height)
 
 ###########################################################
 # Extract intersect
