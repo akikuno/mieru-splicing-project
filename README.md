@@ -13,7 +13,6 @@ The analysis investigates how specific RBP knockouts affect:
 - Gene expression changes
 - Protein complex composition
 - Functional pathway enrichment
-- Splicing factor networks
 
 **Key RBPs analyzed**: Cd2bp2, Qk, Rbm24, Rpl22l1, Spen, Strap, Tra2b, Trim71, Ubr5, Wt1, Ybx1
 
