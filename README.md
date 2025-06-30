@@ -57,13 +57,24 @@ Raw sequencing data and processed results are publicly available:
 
 ## Pipeline Overview
 
-The analysis pipeline consists of:
+The analysis pipeline follows a modular, standardized organization:
 
-1. **Preprocessing** (`015-preprocess/`): Quality control, genome alignment, read counting
-2. **Splicing Analysis** (`025-event-frequency/`): rMATS-based alternative splicing detection
-3. **Functional Analysis** (`035-compare-to-degs/`): Integration with gene expression changes
-4. **Enrichment Analysis** (`045-enrichr/`): Pathway and functional annotation
-5. **Complex Analysis** (`053-complex-*/`): Protein complex and cross-species analysis
+### Fig2 Analysis (Control Characterization)
+- **Fluorescent Analysis** (`025-fluorescents/`): Fluorescent protein expression quantification
+- **Marker Gene Analysis** (`035-marker_genes/`): Validation of cell line markers
+
+### Fig3-6 Analysis (Main Pipeline)
+1. **Setup** (`00-setup/`): System dependencies, directory creation, and genome data download
+2. **Preprocessing** (`01-preprocessing/`): Quality control, trimming, genome alignment, read counting, and differential splicing with rMATS
+3. **Quality Control** (`02-quality-control/`): Exon characteristics analysis and quality metrics
+4. **Event Analysis** (`04-event-analysis/`): Alternative splicing event frequency and ΔPSI distribution analysis (Figure 3)
+5. **DEG Comparison** (`05-deg-comparison/`): Integration with differential gene expression (Figure 4)
+6. **Complex Analysis** (`06-complex-analysis/`): Protein complex enrichment using CORUM/ComplexTab databases (Figure 5)
+7. **Heatmap Analysis** (`07-heatmap-analysis/`): GO term and pathway visualization (Figure 6)
+
+### Legacy Structure
+- Original organization preserved in `_past/` directories for backward compatibility
+- Legacy scripts (e.g., `015-preprocess/`, `Fig3-event-frequency/`) remain functional
 
 ## Usage
 
