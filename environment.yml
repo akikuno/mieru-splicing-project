@@ -25,10 +25,12 @@ dependencies:
   - bioconductor-biocparallel=1.40.0=r44he5774e6_0
   - bioconductor-data-packages=20241220=hdfd78af_0
   - bioconductor-delayedarray=0.32.0=r44h3df3fcb_0
+  - bioconductor-clusterprofiler=4.14.0=r44hdfd78af_0
   - bioconductor-deseq2=1.46.0=r44he5774e6_0
   - bioconductor-ebseq=2.4.0=r44he5774e6_0
   - bioconductor-genomeinfodb=1.42.0=r44hdfd78af_0
   - bioconductor-genomeinfodbdata=1.2.13=r44hdfd78af_0
+  - bioconductor-org.mm.eg.db=3.20.0=r44hdfd78af_0
   - bioconductor-genomicranges=1.58.0=r44h3df3fcb_0
   - bioconductor-iranges=2.40.0=r44h3df3fcb_0
   - bioconductor-matrixgenerics=1.18.0=r44hdfd78af_0
